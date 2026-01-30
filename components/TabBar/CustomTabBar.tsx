@@ -12,8 +12,7 @@ const CustomTabBar = ({ state, descriptors, navigation }: BottomTabBarProps) => 
   const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
 
-  // Color Mapping from Theme
-  // Using 'primary' for active and 'textLight' or 'text' for inactive
+  // Color Mapping
   const primaryColor = COLORS.primary; 
   const secondaryColor = COLORS.textLight || '#8F9BB3'; 
 
@@ -30,19 +29,42 @@ const CustomTabBar = ({ state, descriptors, navigation }: BottomTabBarProps) => 
       style={[
         styles.container,
         {
-          bottom: Platform.OS === 'ios' ? insets.bottom : 20, // Reduced offset
-          backgroundColor: isDarkMode ? 'rgba(0,0,0,0.8)' : 'rgba(255,255,255,0.9)', // Increased opacity
-          borderColor: isDarkMode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)', // Subtle border
-          borderWidth: 1,
+          bottom: Platform.OS === 'ios' ? 20 : 10,
+          // Transparent bg here, BlurView handles it.
+          // Optional: slight shadow tint if needed, but keeping it clean.
+          backgroundColor: 'transparent', 
         },
       ]}
     >
+      {/* 1. Blur Layer (Absolute Background) */}
       <BlurView
-        intensity={Platform.OS === 'ios' ? 95 : 80} // Higher intensity
-        tint={isDarkMode ? 'dark' : 'light'}
-        style={styles.blurView}
-      >
-        <View style={styles.tabBar}>
+        intensity={Platform.OS === 'ios' ? 80 : 0} 
+        tint={isDarkMode ? 'dark' : 'default'}
+        style={[StyleSheet.absoluteFill, { borderRadius: 35, overflow: 'hidden' }]}
+      />
+      
+      {/* 1.5 Fallback Background for Android or if Blur fails */}
+      <View style={[
+          StyleSheet.absoluteFill, 
+          { 
+              backgroundColor: isDarkMode ? 'rgba(0,0,0,0.85)' : 'rgba(255,255,255,0.95)',
+              borderRadius: 35,
+              opacity: Platform.OS === 'ios' ? 0 : 1 // Only visible where Blur is weak/off
+          }
+      ]} />
+
+      {/* 2. Border Layer (on top of blur) */}
+      <View style={[
+          StyleSheet.absoluteFill,
+          {
+              borderWidth: 1,
+              borderColor: COLORS.border || 'rgba(0,0,0,0.1)',
+              borderRadius: 35,
+          }
+      ]} />
+
+      {/* 3. Content Layer (Siblings to Blur, so they can float out if needed) */}
+      <View style={styles.tabBar}>
           {state.routes.map((route, index) => {
             const { options } = descriptors[route.key];
             const label =
@@ -53,6 +75,7 @@ const CustomTabBar = ({ state, descriptors, navigation }: BottomTabBarProps) => 
                 : route.name;
 
             const isFocused = state.index === index;
+            const isLive = route.name === 'live';
 
             const onPress = () => {
               const event = navigation.emit({
@@ -68,16 +91,44 @@ const CustomTabBar = ({ state, descriptors, navigation }: BottomTabBarProps) => 
 
             const IconComponent = icons[route.name] || LayoutGrid;
 
+            // Special Render for LIVE Tab
+            if (isLive) {
+                return (
+                    <TouchableOpacity
+                        key={index}
+                        onPress={onPress}
+                        style={styles.liveButtonContainer} // Now has flex: 1
+                        activeOpacity={0.8}
+                    >
+                        <View style={[styles.liveButton, { backgroundColor: '#FF3B30' }]}>
+                             <IconComponent size={28} color="#FFF" />
+                        </View>
+                    </TouchableOpacity>
+                );
+            }
+
             return (
               <TouchableOpacity
                 key={index}
                 accessibilityRole="button"
                 accessibilityState={isFocused ? { selected: true } : {}}
                 accessibilityLabel={options.tabBarAccessibilityLabel}
-                testID={options.tabBarTestID}
+                testID={(options as any).tabBarTestID}
                 onPress={onPress}
                 style={styles.tabItem}
               >
+                {/* Active Tab Glass Background */}
+                {isFocused && (
+                     <View style={[
+                         StyleSheet.absoluteFillObject, 
+                         { 
+                             backgroundColor: isDarkMode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)', 
+                             borderRadius: 25,
+                             margin: 5
+                         }
+                     ]} />
+                )}
+
                 <TabIcon
                   icon={IconComponent}
                   label={label as string}
@@ -87,8 +138,7 @@ const CustomTabBar = ({ state, descriptors, navigation }: BottomTabBarProps) => 
               </TouchableOpacity>
             );
           })}
-        </View>
-      </BlurView>
+      </View>
     </View>
   );
 };
@@ -98,27 +148,21 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: 20,
     right: 20,
+    height: 70,
     borderRadius: 35,
-    overflow: 'hidden',
+    // overflow: 'visible' is default, creating explicit visible just in case
     shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 10,
-    },
+    shadowOffset: { width: 0, height: 10 },
     shadowOpacity: 0.3,
     shadowRadius: 20,
     elevation: 10,
     alignSelf: 'center',
   },
-  blurView: {
-    flex: 1,
-    borderRadius: 35,
-  },
   tabBar: {
     flexDirection: 'row',
-    height: 70, // Fixed height for the bar content
+    height: '100%',
     alignItems: 'center',
-    justifyContent: 'space-around',
+    justifyContent: 'space-between', // Using flex 1 on items, so strictly it handles itself
   },
   tabItem: {
     flex: 1,
@@ -126,6 +170,28 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     height: '100%',
   },
+  liveButtonContainer: {
+     flex: 1, // Crucial for centering inside the flex row
+     height: '100%',
+     alignItems: 'center',
+     justifyContent: 'center',
+  },
+  liveButton: {
+      width: 56,
+      height: 56,
+      borderRadius: 28,
+      justifyContent: 'center',
+      alignItems: 'center',
+      borderWidth: 3,
+      borderColor: 'rgba(255,255,255,0.8)',
+      // Float Logic
+      position: 'absolute',
+      shadowColor: "#FF3B30",
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.4,
+      shadowRadius: 8,
+      elevation: 5,
+  }
 });
 
 export default CustomTabBar;
