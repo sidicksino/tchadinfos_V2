@@ -13,8 +13,9 @@ const CustomTabBar = ({ state, descriptors, navigation }: BottomTabBarProps) => 
   const { width } = useWindowDimensions();
 
   // Color Mapping
-  const primaryColor = COLORS.primary; 
-  const secondaryColor = COLORS.textLight || '#8F9BB3'; 
+  // Using Neon Blue for active tabs instead of theme primary (which might be Red/Brown)
+  const primaryColor = COLORS.textLight; 
+  const secondaryColor = COLORS.textLight; 
 
   const icons: { [key: string]: any } = {
     index: Home,
@@ -29,7 +30,7 @@ const CustomTabBar = ({ state, descriptors, navigation }: BottomTabBarProps) => 
       style={[
         styles.container,
         {
-          bottom: Platform.OS === 'ios' ? 20 : 10,
+          bottom: Platform.OS === 'ios' ? 10 : 0,
           // Transparent bg here, BlurView handles it.
           // Optional: slight shadow tint if needed, but keeping it clean.
           backgroundColor: 'transparent', 
