@@ -8,7 +8,7 @@ export interface YouTubeVideo {
     channelTitle: string;
 }
 
-const API_KEY = process.env.EXPO_PUBLIC_YOUTUBE_API_KEY || "AIzaSyBzeeLtLS3DbZQvD7ZzjQJ804isn7Xzbjc";
+const API_KEY = process.env.EXPO_PUBLIC_YOUTUBE_API_KEY;
 // TchadInfos Channel ID
 const CHANNEL_ID = "UCwO0v-YozR_tOXu-UeC7sWA";
 
