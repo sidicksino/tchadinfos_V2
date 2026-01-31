@@ -20,7 +20,7 @@ const News = ({ newsList }: Props) => {
   );
 };
 
-export const NewsItem = ({ item }: { item: NewsDataType }) => {
+export const NewsItem = React.memo(({ item }: { item: NewsDataType }) => {
   const { isDarkMode, COLORS } = useContext(ThemeContext);
   
   // Tech/Clean Palette
@@ -59,7 +59,7 @@ export const NewsItem = ({ item }: { item: NewsDataType }) => {
       </TouchableOpacity>
     </Link>
   );
-};
+});
 
 export default News;
 

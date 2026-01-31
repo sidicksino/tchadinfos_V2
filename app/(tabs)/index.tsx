@@ -95,6 +95,14 @@ const index = () => {
           }
           ListEmptyComponent={!isLoading ? <Text style={{ textAlign: 'center', marginTop: 20 }}>Aucune actualité trouvée</Text> : null}
           contentContainerStyle={{ paddingBottom: 110 }}
+          // Performance Optimizations
+          initialNumToRender={5}
+          maxToRenderPerBatch={5}
+          windowSize={5}
+          removeClippedSubviews={true}
+          getItemLayout={(data, index) => (
+            { length: 162, offset: 162 * index, index }
+          )}
         />
       </View>
     </SafeScreen>
