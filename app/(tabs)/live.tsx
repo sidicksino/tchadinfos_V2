@@ -3,8 +3,10 @@ import SafeScreenScondaire from "@/components/SafeScreenScondaaire";
 import { ThemeContext } from "@/context/ThemeContext";
 import { Ionicons } from "@expo/vector-icons";
 import React, { useContext, useState, useRef, useEffect } from "react";
-import { Text, TouchableOpacity, View, Image, ScrollView, Animated } from "react-native";
+import { Text, TouchableOpacity, View, Image, ScrollView, Animated, ActivityIndicator, StyleSheet } from "react-native";
 import { StatusBar } from "expo-status-bar";
+import LiveVideoPlayer from "@/components/LiveVideoPlayer";
+import { useRadio } from "@/hooks/useRadio";
 
 const Live = () => {
   const { COLORS, isDarkMode } = useContext(ThemeContext);
@@ -13,6 +15,12 @@ const Live = () => {
 
   // Pulse Animation for Live Dot
   const fadeAnim = useRef(new Animated.Value(1)).current;
+
+  // STREAM URLS (Replace with real TchadInfos streams)
+  const VIDEO_STREAM_URL = "https://f24hls-i.akamaihd.net/hls/live/221193/F24_FR_LO_HLS/master_900.m3u8"; // Example: France 24
+  const RADIO_STREAM_URL = "https://direct.franceinfo.fr/live/franceinfo-midfi.mp3"; // Example: France Info
+  
+  const { isPlaying: isRadioPlaying, toggleRadio, isLoading: isRadioLoading } = useRadio(RADIO_STREAM_URL);
 
   useEffect(() => {
     Animated.loop(
@@ -73,20 +81,29 @@ const Live = () => {
         <ScrollView showsVerticalScrollIndicator={false}>
             {/* Player Section */}
             <View style={styles.playerContainer}>
-                {/* Mock Background - Replace with real stream later */}
-                <Image 
-                    source={{ uri: mode === 'video' 
-                        ? 'https://tchadinfos.com/wp-content/uploads/2023/10/logo-tchadinfos.png' // Placeholder
-                        : 'https://images.unsplash.com/photo-1478737270239-2f52b27fa34e?q=80&w=2070&auto=format&fit=crop' // Radio abstract
-                    }} 
-                    style={{ width: '100%', height: '100%', opacity: 0.6 }}
-                    resizeMode="cover"
-                />
-                <View style={styles.playerOverlay}>
-                    <TouchableOpacity style={styles.playButton}>
-                        <Ionicons name="play" size={32} color="#fff" style={{ marginLeft: 4 }} />
-                    </TouchableOpacity>
-                </View>
+                {mode === 'video' ? (
+                    <LiveVideoPlayer streamUrl={VIDEO_STREAM_URL} />
+                ) : (
+                    <View style={{ width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center' }}>
+                         <Image 
+                            source={{ uri: 'https://images.unsplash.com/photo-1478737270239-2f52b27fa34e?q=80&w=2070&auto=format&fit=crop' }} 
+                            style={{ ...StyleSheet.absoluteFillObject, opacity: 0.6 }}
+                            resizeMode="cover"
+                        />
+                        <View style={styles.playerOverlay}>
+                            {isRadioLoading ? (
+                                <ActivityIndicator size="large" color="#fff" />
+                            ) : (
+                                <TouchableOpacity style={styles.playButton} onPress={toggleRadio}>
+                                    <Ionicons name={isRadioPlaying ? "pause" : "play"} size={32} color="#fff" style={{ marginLeft: isRadioPlaying ? 0 : 4 }} />
+                                </TouchableOpacity>
+                            )}
+                            <Text style={{ color: '#fff', marginTop: 10, fontWeight: '600', letterSpacing: 1 }}>
+                                {isRadioPlaying ? 'ON AIR • 98.5 FM' : 'TOUCHER POUR ÉCOUTER'}
+                            </Text>
+                        </View>
+                    </View>
+                )}
             </View>
 
             {/* Info Section */}
