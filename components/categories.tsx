@@ -14,7 +14,7 @@ type Props = {
 };
 
 const CategoriesComponent = ({ onCategoryChanged }: Props) => {
-  const { isDarkMode } = useContext(ThemeContext);
+  const { isDarkMode, COLORS } = useContext(ThemeContext);
   const scrollRef = useRef<ScrollView>(null);
   const itemRef = useRef<Array<React.ElementRef<typeof TouchableOpacity> | null>>([]);
   const [activeCategory, setActiveCategory] = useState(0);
@@ -43,7 +43,7 @@ const CategoriesComponent = ({ onCategoryChanged }: Props) => {
         {newsCategoryList.map((category, index) => {
             const isActive = activeCategory === index;
             // Neon Tech Colors
-            const activeColor = '#00d4ff'; 
+            const activeColor = COLORS.neon || '#00d4ff'; 
             const inactiveColor = isDarkMode ? '#888' : '#555';
             
             return (
@@ -54,7 +54,7 @@ const CategoriesComponent = ({ onCategoryChanged }: Props) => {
                   styles.categoryButton,
                   {
                       borderColor: isActive ? activeColor : (isDarkMode ? '#333' : '#e0e0e0'),
-                      backgroundColor: isActive ? 'rgba(0, 212, 255, 0.15)' : 'transparent',
+                      backgroundColor: isActive ? (COLORS.neon ? COLORS.neon + '26' : 'rgba(0, 212, 255, 0.15)') : 'transparent',
                   }
                 ]}
                 onPress={() => handleCategoryPress(index)}

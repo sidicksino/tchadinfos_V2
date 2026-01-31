@@ -30,18 +30,18 @@ const News = ({ newsList }: Props) => {
 };
 
 export const NewsItem = ({ item }: { item: NewsDataType }) => {
-  const { isDarkMode } = useContext(ThemeContext);
+  const { isDarkMode, COLORS } = useContext(ThemeContext);
   
-  const cardBg = isDarkMode ? 'rgba(255,255,255,0.05)' : '#fff';
+  const cardBg = isDarkMode ? (COLORS.glassSurface || 'rgba(255,255,255,0.05)') : '#fff';
   const textColor = isDarkMode ? '#e0e0e0' : '#1A1A1A';
   const dateColor = isDarkMode ? '#aaa' : '#666';
-  const borderColor = isDarkMode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)';
+  const borderColor = isDarkMode ? (COLORS.glassBorder || 'rgba(255,255,255,0.1)') : 'rgba(0,0,0,0.05)';
 
   return (
     <View style={[styles.itemContainer, { backgroundColor: cardBg, borderColor }]}>
       <Image source={{ uri: item.image_url }} style={styles.itemImage} resizeMode="cover" />
       <View style={styles.itemInfo}>
-        <Text style={styles.itemCategory}>{item.category || 'Actualité'}</Text>
+        <Text style={[styles.itemCategory, { color: COLORS.neon || '#00d4ff' }]}>{item.category || 'Actualité'}</Text>
         <Text style={[styles.itemTitle, { color: textColor }]} numberOfLines={3}>
           {item.title}
         </Text>
@@ -93,7 +93,7 @@ const styles = StyleSheet.create({
   itemCategory: {
     fontSize: 11,
     fontWeight: "700",
-    color: "#00d4ff", // Neon Blue
+    color: "#00d4ff", // We will style this dynamic in the component
     textTransform: "uppercase",
     letterSpacing: 0.5,
   },

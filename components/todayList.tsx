@@ -1,5 +1,5 @@
 import { useRouter } from "expo-router";
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import {
   StyleSheet,
   Text,
@@ -12,33 +12,47 @@ import Animated, {
 } from "react-native-reanimated";
 import { NewsDataType } from "../types";
 import TodayItem from "./todayItem";
+import { ThemeContext } from "@/context/ThemeContext";
 
 type Props = {
   newsList: Array<NewsDataType>;
 };
 
 const TodayList = ({ newsList }: Props) => {
-  const router = useRouter(); // <--- Add Hook
+  const router = useRouter(); 
+  const { COLORS } = useContext(ThemeContext);
   const [paginationIndex, setPaginationIndex] = useState(0);
   const scrollX = useSharedValue(0);
   const ref = useAnimatedRef<Animated.FlatList<any>>();
 
+  // Dynamic Styles
+  const dynamicStyles = StyleSheet.create({
+      title: {
+          color: COLORS.text,
+      },
+      button: {
+          borderColor: COLORS.neon || '#00d4ff',
+      },
+      buttonText: {
+          color: COLORS.neon || '#00d4ff',
+      }
+  });
 
   return (
     <View style={styles.container}>
       <View style={styles.todayTextContent}>
-        <Text style={styles.todayText}>Aujourd’hui</Text>
+        <Text style={[styles.todayText, dynamicStyles.title]}>Aujourd’hui</Text>
         <TouchableOpacity 
-          style={styles.todayButton}
-          onPress={() => router.push("/search")} // <--- Navigate to Search
+          style={[styles.todayButton, dynamicStyles.button]}
+          onPress={() => router.push("/search")} 
         >
-          <Text style={styles.todayButtonText}>Plus</Text>
+          <Text style={[styles.todayButtonText, dynamicStyles.buttonText]}>Plus</Text>
         </TouchableOpacity>
       </View>
       <View style={styles.slideWrapper}>
         <Animated.FlatList
           ref={ref}
-          data={newsList} // <--- Use prop directly
+          data={newsList} 
           keyExtractor={(_, index) => `list_item${index}`}
           renderItem={({ item, index }) => (
             <TodayItem slideItem={item} index={index} />
@@ -47,6 +61,7 @@ const TodayList = ({ newsList }: Props) => {
           showsHorizontalScrollIndicator={false}
           pagingEnabled
           scrollEventThrottle={16}
+          contentContainerStyle={{ paddingHorizontal: 15 }} 
         />
       </View>
     </View>
@@ -63,13 +78,13 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginHorizontal: 10,
+    marginHorizontal: 15,
     marginBottom: 10,
-    alignContent: "center",
   },
   todayText: {
     fontSize: 18,
     fontFamily: "Epilogue_500Medium",
+    fontWeight: "600",
   },
   todayButton: {
     paddingVertical: 6,
@@ -77,16 +92,13 @@ const styles = StyleSheet.create({
     borderRadius: 100,
     backgroundColor: "transparent",
     borderWidth: 1,
-    borderColor: "#FF3B30",
   },
   todayButtonText: {
-    color: "#FF3B30",
     fontSize: 11,
     fontFamily: "Epilogue_500Medium",
+    fontWeight: "600",
   },
   slideWrapper: {
-    // width: "100%",
     justifyContent: "center",
-    // flex: 1,
   },
 });

@@ -14,7 +14,7 @@ export const  getStyles = (COLORS) => StyleSheet.create({
       height: 220,
       borderRadius: 24,
       borderWidth: 1,
-      borderColor: 'rgba(255,255,255,0.1)',
+      borderColor: COLORS.glassBorder || 'rgba(255,255,255,0.1)',
     },
     backround: {
       position: "absolute",
@@ -29,13 +29,13 @@ export const  getStyles = (COLORS) => StyleSheet.create({
     },
     sourceInfos: {
       marginBottom: 8,
-      backgroundColor: 'rgba(0, 212, 255, 0.3)',
+      backgroundColor: COLORS.neon ? COLORS.neon + '4D' : 'rgba(0, 212, 255, 0.3)', // 30% opacity
       alignSelf: 'flex-start',
       paddingHorizontal: 10,
       paddingVertical: 5,
       borderRadius: 8,
       borderWidth: 1,
-      borderColor: 'rgba(0, 212, 255, 0.5)',
+      borderColor: COLORS.neon ? COLORS.neon + '80' : 'rgba(0, 212, 255, 0.5)', // 50% opacity
     },
     sourceName: {
       color: '#fff',

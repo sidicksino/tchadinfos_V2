@@ -9,6 +9,11 @@ const coffeeTheme = {
   income: "#2ECC71",
   card: "#FFFFFF",
   shadow: "#000000",
+  neon: "#00d4ff",
+  cardGradient: "#0033A0",
+  glassBorder: "rgba(0,0,0,0.1)",
+  glassSurface: "rgba(255,255,255,0.2)",
+  tabIconSelected: "#00d4ff",
 };
 
 const forestTheme = {
@@ -22,6 +27,11 @@ const forestTheme = {
   income: "#388E3C",
   card: "#E8F5E9",
   shadow: "#000000",
+  neon: "#00d4ff",
+  cardGradient: "#0033A0",
+  glassBorder: "rgba(0,0,0,0.1)",
+  glassSurface: "rgba(255,255,255,0.2)",
+  tabIconSelected: "#00d4ff",
 };
 
 const purpleTheme = {
@@ -35,6 +45,11 @@ const purpleTheme = {
   income: "#388E3C",
   card: "#FFFFFF",
   shadow: "#000000",
+  neon: "#00d4ff",
+  cardGradient: "#0033A0",
+  glassBorder: "rgba(0,0,0,0.1)",
+  glassSurface: "rgba(255,255,255,0.2)",
+  tabIconSelected: "#00d4ff",
 };
 
 const oceanTheme = {
@@ -48,6 +63,11 @@ const oceanTheme = {
   income: "#26A69A",
   card: "#FFFFFF",
   shadow: "#000000",
+  neon: "#00d4ff",
+  cardGradient: "#0033A0",
+  glassBorder: "rgba(0,0,0,0.1)",
+  glassSurface: "rgba(255,255,255,0.2)",
+  tabIconSelected: "#00d4ff",
 };
 
 // DARK MODE 
@@ -63,6 +83,11 @@ const coffeeThemeDark = {
   income: "#81C784",
   card: "#3E2F28",
   shadow: "#000000",
+  neon: "#00d4ff",
+  cardGradient: "#0033A0",
+  glassBorder: "rgba(255,255,255,0.1)",
+  glassSurface: "rgba(255,255,255,0.05)",
+  tabIconSelected: "#00d4ff",
 };
 
 const forestThemeDark = {
@@ -76,6 +101,11 @@ const forestThemeDark = {
   income: "#A5D6A7",
   card: "#1A3324",
   shadow: "#000000",
+  neon: "#00d4ff",
+  cardGradient: "#0033A0",
+  glassBorder: "rgba(255,255,255,0.1)",
+  glassSurface: "rgba(255,255,255,0.05)",
+  tabIconSelected: "#00d4ff",
 };
 
 
@@ -90,6 +120,11 @@ const purpleThemeDark = {
   income: "#81C784",
   card: "#2A1740",
   shadow: "#000000",
+  neon: "#00d4ff",
+  cardGradient: "#0033A0",
+  glassBorder: "rgba(255,255,255,0.1)",
+  glassSurface: "rgba(255,255,255,0.05)",
+  tabIconSelected: "#00d4ff",
 };
 
 const oceanThemeDark = {
@@ -103,6 +138,11 @@ const oceanThemeDark = {
   income: "#80CBC4",
   card: "#102A38",
   shadow: "#000000",
+  neon: "#00d4ff",
+  cardGradient: "#0033A0",
+  glassBorder: "rgba(255,255,255,0.1)",
+  glassSurface: "rgba(255,255,255,0.05)",
+  tabIconSelected: "#00d4ff",
 };
 
 
