@@ -2,6 +2,8 @@ import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useContext } from "react";
 import { ThemeContext, ThemeProvider } from "../context/ThemeContext";
+import { ClerkProvider, ClerkLoaded } from '@clerk/clerk-expo';
+import { tokenCache } from '@/cache'; // I will create this file next since the import in docs is sometimes tricky or assumes alias.
 
 // Fonts Epilogue
 import {
@@ -32,8 +34,15 @@ export const FONTS = {
   Tangerine_Bold: "Tangerine_700Bold",
 };
 
+
+
+const publishableKey = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY!
+
+if (!publishableKey) {
+  throw new Error('Missing Publishable Key')
+}
+
 export default function RootLayout() {
-  // Charger toutes les polices
   const [epilogueLoaded] = useEpilogueFonts({
     Epilogue_400Regular,
     Epilogue_500Medium,
@@ -54,10 +63,14 @@ export default function RootLayout() {
   }
 
   return (
-    <ThemeProvider>
-      <RootLayoutNav />
-      <StatusBar style="auto" />
-    </ThemeProvider>
+    <ClerkProvider tokenCache={tokenCache} publishableKey={publishableKey}>
+      <ClerkLoaded>
+        <ThemeProvider>
+          <RootLayoutNav />
+          <StatusBar style="auto" />
+        </ThemeProvider>
+      </ClerkLoaded>
+    </ClerkProvider>
   );
 }
 

@@ -12,10 +12,14 @@ import { getStyles } from "@/assets/styles/profile.Style";
 // Assuming LogoRouge is not needed in the new design or used differently
 // import LogoRouge from "@/assets/images/logoRouge.svg"; 
 
+import { useUser, useClerk } from "@clerk/clerk-expo";
+
 const Profile = () => {
   const router = useRouter();
   const { COLORS, isDarkMode, toggleTheme } = useContext(ThemeContext);
   const styles = getStyles(COLORS);
+  const { user, isSignedIn } = useUser();
+  const { signOut } = useClerk();
   
   const { newsBookmarks = [], videoBookmarks = [] } = useContext(FavoritesContext) || {};
   const [readCount, setReadCount] = useState(0);
@@ -31,14 +35,6 @@ const Profile = () => {
         loadStats();
     }, [])
   );
-
-  // Mock Data for UI
-  const user = {
-    name: "Sidick Abdoulaye",
-    email: "sidick.abdoulaye@tech.td",
-    avatar: "https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&w=2080&auto=format&fit=crop",
-    isPremium: true
-  };
 
   // State for toggles
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
@@ -71,6 +67,15 @@ const Profile = () => {
     </TouchableOpacity>
   );
 
+  const handleSignOut = async () => {
+      try {
+          await signOut();
+          router.replace("/(auth)/sign-in");
+      } catch (err) {
+          console.error("Sign out error", err);
+      }
+  };
+
   return (
     <SafeScreenScondaire>
       <StatusBar style={isDarkMode ? "light" : "dark"} />
@@ -83,30 +88,45 @@ const Profile = () => {
         {/* User Card */}
         <View style={styles.profileHeader}>
             <View style={styles.userCard}>
-                <View style={styles.avatarContainer}>
-                    <Image source={{ uri: user.avatar }} style={styles.avatar} />
-                    <TouchableOpacity style={styles.editBadge}>
-                        <MaterialCommunityIcons name="pencil" size={16} color="#fff" />
-                    </TouchableOpacity>
-                </View>
-                
-                <Text style={styles.userName}>{user.name}</Text>
-                <Text style={styles.userEmail}>{user.email}</Text>
+                {isSignedIn ? (
+                    <>
+                        <View style={styles.avatarContainer}>
+                            <Image source={{ uri: user?.imageUrl }} style={styles.avatar} />
+                            <TouchableOpacity style={styles.editBadge}>
+                                <MaterialCommunityIcons name="pencil" size={16} color="#fff" />
+                            </TouchableOpacity>
+                        </View>
+                        
+                        <Text style={styles.userName}>{user?.fullName || user?.firstName || "Utilisateur"}</Text>
+                        <Text style={styles.userEmail}>{user?.primaryEmailAddress?.emailAddress}</Text>
 
-                {/* Badge removed as requested */}
-
-                {/* Stats Row */}
-                <View style={styles.statsRow}>
-                    <View style={styles.statItem}>
-                        <Text style={styles.statNumber}>{readCount}</Text>
-                        <Text style={styles.statLabel}>Lectures</Text>
-                    </View>
-                    <View style={styles.statItem}>
-                        <Text style={styles.statNumber}>{newsBookmarks.length + videoBookmarks.length}</Text>
-                        <Text style={styles.statLabel}>Favoris</Text>
-                    </View>
-                    {/* SeriRemoved as requested */}
-                </View>
+                        {/* Stats Row */}
+                        <View style={styles.statsRow}>
+                            <View style={styles.statItem}>
+                                <Text style={styles.statNumber}>{readCount}</Text>
+                                <Text style={styles.statLabel}>Lectures</Text>
+                            </View>
+                            <View style={styles.statItem}>
+                                <Text style={styles.statNumber}>{newsBookmarks.length + videoBookmarks.length}</Text>
+                                <Text style={styles.statLabel}>Favoris</Text>
+                            </View>
+                        </View>
+                    </>
+                ) : (
+                    <>
+                        <View style={[styles.avatarContainer, { backgroundColor: COLORS.glassSurface }]}>
+                            <Ionicons name="person-circle-outline" size={80} color={COLORS.textLight} />
+                        </View>
+                        <Text style={styles.userName}>Invité</Text>
+                        <Text style={styles.userEmail}>Connectez-vous pour plus de fonctionnalités</Text>
+                        <TouchableOpacity 
+                            style={[styles.menuItem, { backgroundColor: COLORS.neon, marginTop: 20, justifyContent: 'center' }]}
+                            onPress={() => router.push("/(auth)/sign-in")}
+                        >
+                             <Text style={{ fontWeight: 'bold', color: '#000' }}>Se connecter / S'inscrire</Text>
+                        </TouchableOpacity>
+                    </>
+                )}
             </View>
         </View>
 
@@ -121,7 +141,8 @@ const Profile = () => {
                 value={isDarkMode}
                 onValueChange={toggleTheme}
             />
-            <SettingItem 
+            {/* ... other settings ... */}
+             <SettingItem 
                 icon="notifications-outline" 
                 label="Notifications" 
                 type="toggle" 
@@ -139,12 +160,15 @@ const Profile = () => {
             <SettingItem icon="information-circle-outline" label="À propos" onPress={() => router.push("/pages/about")} />
             
             <View style={{ height: 20 }} />
-            <SettingItem 
-                icon="log-out-outline" 
-                label="Déconnexion" 
-                color="#ef4444"
-                onPress={() => console.log("Logout")} 
-            />
+            
+            {isSignedIn && (
+                <SettingItem 
+                    icon="log-out-outline" 
+                    label="Déconnexion" 
+                    color="#ef4444"
+                    onPress={handleSignOut} 
+                />
+            )}
             
             <Text style={{ textAlign: 'center', marginTop: 30, color: COLORS.textLight, fontSize: 12 }}>
                 TchadInfos V2.0.1 • Build 2026
