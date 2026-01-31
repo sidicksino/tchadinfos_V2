@@ -1,4 +1,5 @@
 import { StyleSheet, Dimensions } from "react-native";
+import { SHADOWS } from "@/constants/shadows";
 
 const { width } = Dimensions.get("window");
 
@@ -20,17 +21,13 @@ export const getStyles = (COLORS) => StyleSheet.create({
     // Glassmorphic User Card
     userCard: {
         width: '100%',
-        backgroundColor: COLORS.glassSurface || 'rgba(255,255,255,0.05)',
+        backgroundColor: COLORS.card, // Solid color for clean Android shadow
         borderRadius: 24,
         padding: 24,
         alignItems: 'center',
         borderWidth: 1,
         borderColor: COLORS.glassBorder || 'rgba(255,255,255,0.1)',
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 10 },
-        shadowOpacity: 0.1,
-        shadowRadius: 20,
-        elevation: 5,
+        ...SHADOWS.medium,
     },
     avatarContainer: {
         position: 'relative',
@@ -137,11 +134,7 @@ export const getStyles = (COLORS) => StyleSheet.create({
         borderWidth: 1,
         borderColor: COLORS.border,
         // Shadow for depth
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.03,
-        shadowRadius: 4,
-        elevation: 1,
+        ...SHADOWS.small,
     },
     menuLeft: {
         flexDirection: "row",
