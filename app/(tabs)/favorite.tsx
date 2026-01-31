@@ -25,7 +25,7 @@ import { Ionicons } from "@expo/vector-icons";
 const Favorite = () => {
   const { COLORS, isDarkMode } = useContext(ThemeContext);
   const styles = getStyles(COLORS); // Use new external styles
-  const { videoBookmarks = [], newsBookmarks = [] } = useContext(FavoritesContext) || {}; // Handle undefined context
+  const { videoBookmarks = [], newsBookmarks = [], toggleNewsFavorite = async () => {} } = useContext(FavoritesContext) || {}; // Handle undefined context
 
   const [selected, setSelected] = useState<"option1" | "option2">("option1");
   const [fetchedNews, setFetchedNews] = useState<any[]>([]);
@@ -41,18 +41,26 @@ const Favorite = () => {
   const [isLoading, setIsLoading] = useState(false);
   const isFocused = useIsFocused();
 
-  // Sync News
+  // Sync News Logic
+  
+  // 1. Immediate Local Filtering (for removals)
+  useEffect(() => {
+     if (fetchedNews.length > 0) {
+         setFetchedNews(prev => prev.filter(item => newsBookmarks.includes(item.article_id)));
+     }
+  }, [newsBookmarks]);
+
+  // 2. Smart Fetching (only for new items or initial load)
   useEffect(() => {
     if (isFocused && selected === "option1") {
-       fetchNewsBatch();
+       const loadedIds = fetchedNews.map(n => n.article_id);
+       const hasMissingItems = newsBookmarks.some(id => !loadedIds.includes(id));
+       
+       if (hasMissingItems || (fetchedNews.length === 0 && newsBookmarks.length > 0)) {
+           fetchNewsBatch();
+       }
     }
   }, [isFocused, selected, newsBookmarks]);
-
-  // Sync Videos
-  // If FavoritesContext already has video objects, we can just use them!
-  // Let's verify if `videoBookmarks` are items or IDs. 
-  // Based on my previous `FavoritesContext` creation (Step 1090), I used `YouTubeVideo[]`.
-  // So `videoBookmarks` IS the data. No need to fetch.
 
   const fetchNewsBatch = async () => {
     if (newsBookmarks.length === 0) {
@@ -60,16 +68,14 @@ const Favorite = () => {
         return;
     }
     try {
-      setIsLoading(true);
-      // newsBookmarks is array of IDs (strings)
+      if (fetchedNews.length === 0) setIsLoading(true); // Only show loader on initial empty
+      
       const query_string = newsBookmarks.join(",");
-      // API call to get details for these IDs
-      // Note: newsdata.io might have limits or specific format. 
-      // If the list is long, might need pagination or careful handling.
       if (query_string) {
         const response = await axios.get(
             `https://newsdata.io/api/1/latest?apikey=${process.env.EXPO_PUBLIC_API_KEY}&id=${query_string}`
         );
+        // We might want to merge instead of replace to prevent flashing, but replace is safer for sync
         setFetchedNews(response.data.results || []);
       }
     } catch (error) {
@@ -125,11 +131,30 @@ const Favorite = () => {
                   showsVerticalScrollIndicator={false}
                   contentContainerStyle={{ paddingBottom: 20 }}
                   renderItem={({ item, index }) => (
-                    <Link href={`/news/${item.article_id}`} asChild key={index}>
-                      <TouchableOpacity style={{ paddingHorizontal: 20 }}>
-                        <NewsItem item={item} />
-                      </TouchableOpacity>
-                    </Link>
+                    <View key={index} style={{ paddingHorizontal: 20, marginBottom: 16 }}>
+                        <Link href={`/news/${item.article_id}`} asChild>
+                          <TouchableOpacity activeOpacity={0.9}>
+                            <NewsItem item={item} />
+                          </TouchableOpacity>
+                        </Link>
+                        
+                        <TouchableOpacity 
+                            onPress={() => toggleNewsFavorite(item.article_id)}
+                            style={{
+                                position: 'absolute',
+                                top: 10,
+                                right: 30, // Adjust for padding
+                                zIndex: 10,
+                                backgroundColor: 'rgba(0,0,0,0.5)',
+                                borderRadius: 20,
+                                padding: 8,
+                                justifyContent: 'center',
+                                alignItems: 'center'
+                            }}
+                        >
+                            <Ionicons name="heart" size={20} color="#FF3B30" />
+                        </TouchableOpacity>
+                    </View>
                   )}
                 />
               )}

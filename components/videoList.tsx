@@ -14,8 +14,7 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import YoutubePlayer from "react-native-youtube-iframe";
 
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useIsFocused } from "@react-navigation/native";
+import { FavoritesContext } from "@/context/FavoritesContext";
 
 type Props = {
   videoList: YouTubeVideo[];
@@ -23,45 +22,15 @@ type Props = {
 
 const VideoNewsScreen = ({ videoList }: Props) => {
   const [selectedVideoId, setSelectedVideoId] = React.useState<string | null>(null);
-  const [favorites, setFavorites] = React.useState<YouTubeVideo[]>([]);
+  const context = React.useContext(FavoritesContext);
+  // Default fallbacks if context is undefined
+  const { isVideoFavorite, toggleVideoFavorite } = context || {
+      isVideoFavorite: () => false,
+      toggleVideoFavorite: async () => {} 
+  };
   
   const insets = useSafeAreaInsets();
-  const isFocused = useIsFocused();
-
-  // Load favorites when screen focuses or mounts
-  React.useEffect(() => {
-    if (isFocused) {
-        loadFavorites();
-    }
-  }, [isFocused]);
-
-  const loadFavorites = async () => {
-    try {
-        const stored = await AsyncStorage.getItem("video_bookmarks");
-        if (stored) {
-            setFavorites(JSON.parse(stored));
-        }
-    } catch (e) {
-        console.error("Failed to load video favorites", e);
-    }
-  };
-
-  const isFavorite = (id: string) => favorites.some((fav) => fav.id === id);
-
-  const toggleFavorite = async (video: YouTubeVideo) => {
-    try {
-        let newFavorites = [...favorites];
-        if (isFavorite(video.id)) {
-            newFavorites = newFavorites.filter((fav) => fav.id !== video.id);
-        } else {
-            newFavorites.push(video);
-        }
-        setFavorites(newFavorites);
-        await AsyncStorage.setItem("video_bookmarks", JSON.stringify(newFavorites));
-    } catch (e) {
-        console.error("Failed to toggle favorite", e);
-    }
-  };
+  // No local state needed for favorites anymore, simplified!
 
   return (
     <View style={styles.container}>
@@ -91,12 +60,12 @@ const VideoNewsScreen = ({ videoList }: Props) => {
             <View style={styles.flexFavorite}>
               <Text style={styles.title} numberOfLines={2}>{item.title}</Text>
               <TouchableOpacity
-                onPress={() => toggleFavorite(item)}
+                onPress={() => toggleVideoFavorite(videoList.find(v => v.id === item.id) || item)}
                 style={styles.backButton}
               >
                 <Ionicons 
-                    name={isFavorite(item.id) ? "heart" : "heart-outline"} 
-                    color={isFavorite(item.id) ? "red" : "#000"} 
+                    name={isVideoFavorite(item.id) ? "heart" : "heart-outline"} 
+                    color={isVideoFavorite(item.id) ? "red" : "#000"} 
                     size={22} 
                 />
               </TouchableOpacity>
