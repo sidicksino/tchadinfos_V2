@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "TchadInfos_version1",
-    "slug": "TchadInfos_version1",
+    "name": "TchadInfos",
+    "slug": "TchadInfos",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/ti_logo.png",
-    "scheme": "tchadinfosversion1",
+    "scheme": "tchadinfos",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
