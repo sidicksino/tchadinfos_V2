@@ -2,6 +2,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Animated, { useAnimatedStyle, withTiming } from 'react-native-reanimated';
+import { SHADOWS } from "@/constants/shadows";
 
 interface Props {
   currentIndex: number;
@@ -52,11 +53,7 @@ const styles = StyleSheet.create({
     width: 200,
     height: 56,
     borderRadius: 28,
-    shadowColor: '#00d4ff',
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.5,
-    shadowRadius: 10,
-    elevation: 8,
+    ...SHADOWS.techGlow('#00d4ff'),
   },
   touchable: {
       flex: 1,
