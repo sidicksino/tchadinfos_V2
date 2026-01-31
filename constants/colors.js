@@ -171,4 +171,4 @@ export const THEMES = {
 // "c":{"a":0,"k":[0.545,0.349,0.239,1]} // marron
 
 // 👇 change this to switch theme
-export const COLORS = THEMES.coffee.light;
+export const COLORS = THEMES.ocean.light;
