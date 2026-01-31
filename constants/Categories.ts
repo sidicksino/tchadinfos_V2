@@ -13,26 +13,26 @@ const newsCategoryList = [
   },
   {
     id: 3,
-    title: "Éducation",
-    slug: "education",
+    title: "Économie", // Was Education (not supported directly, trying business/economy)
+    slug: "business",
     selected: false,
   },
   {
     id: 4,
     title: "Culture",
-    slug: "culture",
+    slug: "entertainment", // Closest match
     selected: false,
   },
   {
     id: 5,
-    title: "Économie",
-    slug: "economie",
+    title: "Tech",
+    slug: "technology",
     selected: false,
   },
   {
     id: 6,
-    title: "Société",
-    slug: "société",
+    title: "Monde",
+    slug: "world",
     selected: false,
   },
   {
@@ -44,7 +44,7 @@ const newsCategoryList = [
   {
     id: 8,
     title: "Santé",
-    slug: "santé",
+    slug: "health", // Fixed: santé -> health
     selected: false,
   },
 ];
