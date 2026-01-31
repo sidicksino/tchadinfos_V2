@@ -171,7 +171,7 @@ const Profile = () => {
             <SettingItem icon="language-outline" label="Langue" onPress={() => {}} />
 
             <Text style={styles.sectionTitle}>Support</Text>
-            <SettingItem icon="help-circle-outline" label="Aide & FAQ" onPress={() => {}} />
+            <SettingItem icon="help-circle-outline" label="Aide & FAQ" onPress={() => router.push("/pages/faq")} />
             <SettingItem icon="information-circle-outline" label="À propos" onPress={() => router.push("/pages/about")} />
             
             <View style={{ height: 20 }} />
