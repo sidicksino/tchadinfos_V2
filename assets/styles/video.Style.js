@@ -9,7 +9,7 @@ export const getStyles = (COLORS) => StyleSheet.create({
         backgroundColor: COLORS.background, // Consistent background
     },
     headerContainer: {
-        paddingHorizontal: 20,
+        paddingHorizontal: 0, // Header has its own padding
         marginBottom: 10,
     },
     
