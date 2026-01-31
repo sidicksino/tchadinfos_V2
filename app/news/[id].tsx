@@ -111,8 +111,17 @@ const NewsDetails = (props: Props) => {
   useEffect(() => {
     if (!isLoading && news.length > 0) {
       renderBookmark(news[0].article_id);
+      incrementReadCount();
     }
   }, [isLoading, news]);
+
+  const incrementReadCount = async () => {
+    try {
+        const current = await AsyncStorage.getItem("total_reads");
+        const newVal = (current ? parseInt(current) : 0) + 1;
+        await AsyncStorage.setItem("total_reads", newVal.toString());
+    } catch (e) { console.error(e); }
+  };
 
   return (
     <SafeScreen>

@@ -4,6 +4,9 @@ import { useRouter } from "expo-router";
 import { Ionicons, MaterialCommunityIcons, FontAwesome5 } from "@expo/vector-icons";
 import { StatusBar } from "expo-status-bar";
 import { ThemeContext } from "@/context/ThemeContext";
+import { FavoritesContext } from "@/context/FavoritesContext";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useFocusEffect } from "expo-router";
 import SafeScreenScondaire from "@/components/SafeScreenScondaaire";
 import { getStyles } from "@/assets/styles/profile.Style";
 // Assuming LogoRouge is not needed in the new design or used differently
@@ -13,6 +16,21 @@ const Profile = () => {
   const router = useRouter();
   const { COLORS, isDarkMode, toggleTheme } = useContext(ThemeContext);
   const styles = getStyles(COLORS);
+  
+  const { newsBookmarks = [], videoBookmarks = [] } = useContext(FavoritesContext) || {};
+  const [readCount, setReadCount] = useState(0);
+
+  useFocusEffect(
+    React.useCallback(() => {
+        const loadStats = async () => {
+            try {
+                const count = await AsyncStorage.getItem("total_reads");
+                setReadCount(count ? parseInt(count) : 0);
+            } catch (e) { console.error(e); }
+        };
+        loadStats();
+    }, [])
+  );
 
   // Mock Data for UI
   const user = {
@@ -80,17 +98,14 @@ const Profile = () => {
                 {/* Stats Row */}
                 <View style={styles.statsRow}>
                     <View style={styles.statItem}>
-                        <Text style={styles.statNumber}>124</Text>
+                        <Text style={styles.statNumber}>{readCount}</Text>
                         <Text style={styles.statLabel}>Lectures</Text>
                     </View>
                     <View style={styles.statItem}>
-                        <Text style={styles.statNumber}>42</Text>
+                        <Text style={styles.statNumber}>{newsBookmarks.length + videoBookmarks.length}</Text>
                         <Text style={styles.statLabel}>Favoris</Text>
                     </View>
-                    <View style={styles.statItem}>
-                        <Text style={styles.statNumber}>12j</Text>
-                        <Text style={styles.statLabel}>Série</Text>
-                    </View>
+                    {/* SeriRemoved as requested */}
                 </View>
             </View>
         </View>
