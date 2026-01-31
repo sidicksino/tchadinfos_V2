@@ -9,19 +9,21 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 import {
     ActivityIndicator,
     FlatList,
-    StyleSheet,
-    Text,
     TextInput,
     TouchableOpacity,
     View,
+    Text,
 } from "react-native";
+import { getStyles } from "../assets/styles/search.Style";
 
 export default function SearchScreen() {
   const { COLORS } = useContext(ThemeContext);
+  const styles = getStyles(COLORS);
   const router = useRouter();
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<NewsDataType[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
   const inputRef = useRef<TextInput>(null);
 
   const [initialNews, setInitialNews] = useState<NewsDataType[]>([]);
@@ -56,8 +58,6 @@ export default function SearchScreen() {
 
     setIsLoading(true);
     try {
-      // Using generic search endpoint - adjusting query param as needed for newsdata.io
-      // Note: newsdata.io free tier has limited search ('q' parameter).
       const URL = `https://newsdata.io/api/1/latest?apikey=${process.env.EXPO_PUBLIC_API_KEY}&language=fr&q=${text}&image=1&removeduplicate=1`;
       const response = await axios.get(URL);
       if (response && response.data) {
@@ -82,22 +82,31 @@ export default function SearchScreen() {
 
   return (
     <SafeScreen>
-      <View style={[styles.container, { backgroundColor: COLORS.background }]}>
+      <View style={styles.container}>
         {/* Header with Search Input */}
         <View style={styles.header}>
           <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
             <Ionicons name="arrow-back" size={24} color={COLORS.text} />
           </TouchableOpacity>
           
-          <View style={[styles.searchBar, { backgroundColor: COLORS.card, borderColor: COLORS.border }]}>
-            <Ionicons name="search-outline" size={20} color={COLORS.textLight} />
+          <View style={[
+            styles.searchBar, 
+            isFocused && styles.searchBarFocused
+          ]}>
+            <Ionicons 
+                name="search-outline" 
+                size={20} 
+                color={isFocused ? (COLORS.neon || '#00d4ff') : COLORS.textLight} 
+            />
             <TextInput
               ref={inputRef}
-              style={[styles.input, { color: COLORS.text }]}
+              style={styles.input}
               placeholder="Rechercher..."
               placeholderTextColor={COLORS.textLight}
               value={query}
               onChangeText={handleSearch}
+              onFocus={() => setIsFocused(true)}
+              onBlur={() => setIsFocused(false)}
               returnKeyType="search"
             />
             {query.length > 0 && (
@@ -111,23 +120,24 @@ export default function SearchScreen() {
         {/* Results */}
         {isLoading ? (
           <View style={styles.center}>
-            <ActivityIndicator size="large" color={COLORS.primary} />
+            <ActivityIndicator size="large" color={COLORS.primary || '#00d4ff'} />
           </View>
         ) : (
           <FlatList
             data={displayData}
             keyExtractor={(item) => item.article_id}
             renderItem={renderItem}
-            contentContainerStyle={{ paddingBottom: 50, paddingTop: 10 }}
+            contentContainerStyle={styles.resultsContainer}
             ListHeaderComponent={
                 query.length === 0 && initialNews.length > 0 ? (
-                    <Text style={{ marginLeft: 20, marginBottom: 10, fontSize: 16, fontFamily: 'Epilogue_700Bold', color: COLORS.text }}>Actualités récentes</Text>
+                    <Text style={styles.sectionTitle}>ACTUALITÉS RÉCENTES</Text>
                 ) : null
             }
             ListEmptyComponent={
               query.length > 2 && !isLoading ? (
                 <View style={styles.center}>
-                  <Text style={{ color: COLORS.textLight, fontFamily: 'Epilogue_400Regular' }}>Aucun résultat trouvé</Text>
+                   <Ionicons name="search" size={64} color={COLORS.glassBorder || '#ddd'} />
+                  <Text style={styles.emptyText}>Aucun résultat trouvé pour "{query}"</Text>
                 </View>
               ) : null
             }
@@ -137,40 +147,3 @@ export default function SearchScreen() {
     </SafeScreen>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 15,
-    paddingVertical: 10,
-    gap: 10,
-  },
-  backButton: {
-    padding: 5,
-  },
-  searchBar: {
-    flex: 1,
-    flexDirection: "row",
-    alignItems: "center",
-    height: 45,
-    borderRadius: 25,
-    paddingHorizontal: 15,
-    borderWidth: 1,
-    gap: 10,
-  },
-  input: {
-    flex: 1,
-    fontSize: 16,
-    fontFamily: "Epilogue_400Regular",
-  },
-  center: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    marginTop: 50,
-  },
-});
