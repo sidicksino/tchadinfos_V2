@@ -30,7 +30,7 @@ export default function LiveVideoPlayer({ streamUrl, style }: Props) {
         try {
           player.pause();
         } catch (e) {
-          console.log("Error pausing video (player likely destroyed):", e);
+          // Player effectively destroyed, no need to pause.
         }
       };
     }, [player])
