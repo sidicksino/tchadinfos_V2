@@ -3,7 +3,7 @@ import { StyleSheet } from "react-native";
 export const getStyles = (COLORS) =>
     StyleSheet.create({
         header: {
-            backgroundColor: 'transparent', // Let SafeScreen handle bg or transparent for gradient
+            backgroundColor: 'transparent',
             paddingHorizontal: 15,
             marginBottom: 20,
             paddingTop: 10,
@@ -22,12 +22,13 @@ export const getStyles = (COLORS) =>
             gap: 12,
         },
         logo: {
-            width: 140, // Slightly smaller for elegance
+            width: 140,
             height: 35,
             resizeMode: "contain",
         },
         notification: {
-            padding: 8,
+            width: 40,
+            height: 40,
             borderRadius: 12,
             backgroundColor: COLORS.glassSurface || 'rgba(255,255,255,0.05)',
             borderWidth: 1,
@@ -40,13 +41,12 @@ export const getStyles = (COLORS) =>
             alignItems: "center",
             justifyContent: "space-between",
             flex: 1,
+            height: 50, // Fixed height for alignment
             backgroundColor: COLORS.glassSurface || 'rgba(255,255,255,0.05)',
             borderRadius: 14,
             paddingHorizontal: 15,
-            paddingVertical: 12,
             borderWidth: 1,
             borderColor: COLORS.glassBorder || 'rgba(255,255,255,0.1)',
-            // Shadow for depth
             shadowColor: "#000",
             shadowOffset: { width: 0, height: 2 },
             shadowOpacity: 0.05,
@@ -55,15 +55,16 @@ export const getStyles = (COLORS) =>
         },
         inputResearch: {
             flex: 1,
-            fontSize: 16,
+            fontSize: 14,
             color: COLORS.text,
         },
         reseachIcon:{
             color: COLORS.neon || '#00d4ff',            
         },
         profile: {
-            padding: 10,
-            borderRadius: 12,
+            width: 50, // Fixed width matching height
+            height: 50, // Fixed height matching SearchBox
+            borderRadius: 14, // Consistent radius
             backgroundColor: COLORS.glassSurface || 'rgba(255,255,255,0.05)',
             borderWidth: 1,
             borderColor: COLORS.glassBorder || 'rgba(255,255,255,0.1)',
@@ -71,7 +72,8 @@ export const getStyles = (COLORS) =>
             alignItems: 'center',
         },
         reseachText:{
-            color: COLORS.textLight || "#A5ABB9",
+            color: COLORS.text, // Match theme text
+            opacity: 0.6, // Placeholder effect
             fontSize: 14,
             fontFamily: "Epilogue_400Regular",
         },
