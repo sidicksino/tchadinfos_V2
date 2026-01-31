@@ -18,9 +18,8 @@ export default function LiveVideoPlayer({ streamUrl, style }: Props) {
       <VideoView 
         style={styles.video} 
         player={player} 
-        allowsFullscreen 
-        allowsPictureInPicture // Great for news apps
-        nativeControls={true}
+        allowsPictureInPicture 
+        nativeControls 
       />
     </View>
   );

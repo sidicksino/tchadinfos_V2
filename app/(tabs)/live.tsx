@@ -17,7 +17,8 @@ const Live = () => {
   const fadeAnim = useRef(new Animated.Value(1)).current;
 
   // STREAM URLS (Replace with real TchadInfos streams)
-  const VIDEO_STREAM_URL = "https://f24hls-i.akamaihd.net/hls/live/221193/F24_FR_LO_HLS/master_900.m3u8"; // Example: France 24
+  // Using a stable HLS test stream for debugging
+  const VIDEO_STREAM_URL = "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8"; 
   const RADIO_STREAM_URL = "https://direct.franceinfo.fr/live/franceinfo-midfi.mp3"; // Example: France Info
   
   const { isPlaying: isRadioPlaying, toggleRadio, isLoading: isRadioLoading } = useRadio(RADIO_STREAM_URL);
