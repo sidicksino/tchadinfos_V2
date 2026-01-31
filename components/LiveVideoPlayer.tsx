@@ -6,12 +6,27 @@ type Props = {
     style?: any;
 };
 
+import { useFocusEffect } from 'expo-router';
+import { useCallback } from 'react';
+
 export default function LiveVideoPlayer({ streamUrl, style }: Props) {
   // Initialize player with the HLS source (m3u8)
   const player = useVideoPlayer(streamUrl, (player) => {
     player.loop = false; // Live streams don't loop
     player.play();
   });
+
+  useFocusEffect(
+    useCallback(() => {
+      // pivot: Resume playback when screen is focused
+      player.play();
+
+      return () => {
+        // pivot: Pause playback when screen loses focus
+        player.pause();
+      };
+    }, [player])
+  );
 
   return (
     <View style={[styles.container, style]}>

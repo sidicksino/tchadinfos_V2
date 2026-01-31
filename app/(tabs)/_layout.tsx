@@ -7,11 +7,11 @@ import { ThemeContext } from "@/context/ThemeContext";
 import CustomTabBar from "@/components/TabBar/CustomTabBar";
 
 const TabsLayout = () => {
-  const { isDarkMode } = useContext(ThemeContext);
+  const { isDarkMode, COLORS } = useContext(ThemeContext);
 
   return (
     <SafeScreenTabs>
-      <StatusBar style={isDarkMode ? "light" : "dark"} />
+      <StatusBar style="light" backgroundColor={COLORS.cardGradient || "#0033A0"} />
       <Tabs
         tabBar={(props) => <CustomTabBar {...props} />}
         screenOptions={{
