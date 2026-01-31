@@ -31,7 +31,7 @@ const SliderItem = ({ slideItem, index, scrollX }: Props) => {
           translateX: interpolate(
             scrollX.value,
             [(index - 1) * width, index * width, (index + 1) * width],
-            [-width * 0.15, 0, width * 0.15],
+            [-width * 0.12, 0, width * 0.12],
             Extrapolation.CLAMP
           ),
         },
@@ -39,7 +39,7 @@ const SliderItem = ({ slideItem, index, scrollX }: Props) => {
           scale: interpolate(
             scrollX.value,
             [(index - 1) * width, index * width, (index + 1) * width],
-            [0.9, 1, 0.9],
+            [0.92, 1, 0.92],
             Extrapolation.CLAMP
           ),
         },

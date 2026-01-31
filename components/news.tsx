@@ -1,10 +1,11 @@
 import { Link } from "expo-router";
 import Moment from "moment";
-import React from "react";
+import React, { useContext } from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import Time from "../assets/images/time.svg";
 import { NewsDataType } from "../types";
 import Loading from "./loading";
+import { ThemeContext } from "@/context/ThemeContext";
 
 type Props = {
   newsList: Array<NewsDataType>;
@@ -29,19 +30,26 @@ const News = ({ newsList }: Props) => {
 };
 
 export const NewsItem = ({ item }: { item: NewsDataType }) => {
+  const { isDarkMode } = useContext(ThemeContext);
+  
+  const cardBg = isDarkMode ? 'rgba(255,255,255,0.05)' : '#fff';
+  const textColor = isDarkMode ? '#e0e0e0' : '#1A1A1A';
+  const dateColor = isDarkMode ? '#aaa' : '#666';
+  const borderColor = isDarkMode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)';
+
   return (
-    <View style={styles.itemContainer}>
-      <Image source={{ uri: item.image_url }} style={styles.itemImage} />
+    <View style={[styles.itemContainer, { backgroundColor: cardBg, borderColor }]}>
+      <Image source={{ uri: item.image_url }} style={styles.itemImage} resizeMode="cover" />
       <View style={styles.itemInfo}>
-        <Text style={styles.itemCategory}>{item.category}</Text>
-        <Text style={styles.itemTitle} numberOfLines={3}>
+        <Text style={styles.itemCategory}>{item.category || 'Actualité'}</Text>
+        <Text style={[styles.itemTitle, { color: textColor }]} numberOfLines={3}>
           {item.title}
         </Text>
         <View style={styles.itemDate}>
           <View style={styles.logo}>
             <Time />
           </View>
-          <Text style={styles.itemDateText}>
+          <Text style={[styles.itemDateText, { color: dateColor }]}>
             {Moment(item.pubDate).startOf("day").fromNow()}
           </Text>
         </View>
@@ -55,59 +63,60 @@ export default News;
 const styles = StyleSheet.create({
   container: {
     marginVertical: 20,
-    marginHorizontal: 20,
+    marginHorizontal: 15,
     marginBottom: 70,
   },
   itemContainer: {
     flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 20,
-    flex: 1,
-    gap: 10,
+    borderRadius: 16,
+    overflow: 'hidden',
+    borderWidth: 1,
+    // Minimal shadow
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    elevation: 2,
+    marginBottom: 15, // Spacing between items
+    paddingRight: 10,
   },
   itemImage: {
-    width: 133,
-    height: 115,
-    borderRadius: 20,
-    marginRight: 10,
+    width: 110,
+    height: 110,
+    borderRadius: 16, // Matching left border
+    marginRight: 12,
   },
   itemInfo: {
     flex: 1,
-    gap: 5,
-    justifyContent: "center",
-    marginTop: 10,
+    paddingVertical: 10,
+    justifyContent: "space-between",
   },
   itemCategory: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: "#0033A0",
-    textTransform: "capitalize",
-    fontFamily: "Epilogue_400Regular",
+    fontSize: 11,
+    fontWeight: "700",
+    color: "#00d4ff", // Neon Blue
+    textTransform: "uppercase",
+    letterSpacing: 0.5,
   },
   itemTitle: {
-    marginTop: 5,
     fontSize: 14,
-    color: "#141E28",
+    fontWeight: '600',
     lineHeight: 20,
-    letterSpacing: 0.5,
-    fontFamily: "Epilogue_500Medium",
+    marginVertical: 4,
+    fontFamily: 'System', 
   },
   itemDate: {
     flexDirection: "row",
     alignItems: "center",
-    flex: 1,
-    gap: 10,
+    gap: 6,
   },
   logo: {
     justifyContent: "center",
-    padding: 3,
-    width: 15,
-    height: 15,
-    backgroundColor: "#A5ABB9" + "50",
-    borderRadius: 20,
+    padding: 0,
+    width: 12,
+    height: 12,
   },
   itemDateText: {
-    fontSize: 10,
+    fontSize: 11,
     fontFamily: "Epilogue_400Regular",
   },
 });
