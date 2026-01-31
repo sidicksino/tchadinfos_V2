@@ -53,12 +53,13 @@ export default function Page() {
       if (err.errors && err.errors.length > 0) {
           const code = err.errors[0].code;
           switch (code) {
-            case "form_identifier_not_found": message = "Adresse email introuvable. Veuillez vous inscrire."; break;
-            case "form_password_incorrect": message = "Mot de passe incorrect."; break;
+            case "form_identifier_not_found": 
+            case "form_password_incorrect": 
+                message = "Identifiants invalides."; 
+                break;
             case "form_param_format_invalid": message = "Format d'email invalide."; break;
-            case "too_many_attempts": message = "Trop de tentatives. Veuillez patienter un moment."; break;
-            case "strategy_for_user_invalid": message = "Méthode de connexion invalide."; break;
-            default: message = err.errors[0].longMessage || err.errors[0].message;
+            case "too_many_attempts": message = "Trop de tentatives. Veuillez patienter."; break;
+            default: message = "Identifiants invalides."; // Default fallback for security
           }
       }
       alert(message);
