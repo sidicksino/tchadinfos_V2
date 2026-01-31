@@ -16,7 +16,7 @@ const SafeScreenScondaire: React.FC<SafeScreenProps> = ({ children }) => {
       style={{
         paddingTop: insets.top,
         flex: 1,
-        backgroundColor: COLORS.text,
+        backgroundColor: COLORS.background,
       }}
     >
       {children}
