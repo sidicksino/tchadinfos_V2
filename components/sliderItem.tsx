@@ -53,7 +53,7 @@ const SliderItem = ({ slideItem, index, scrollX }: Props) => {
       <Animated.View style={[styles.itemWrapper, rnStyle]}>
         <Image source={{ uri: slideItem.image_url }} style={styles.image} />
         <LinearGradient
-          colors={["transparent", "rgb(0,51,160)"]}
+          colors={["transparent", COLORS.cardGradient || "rgb(0,51,160)"]}
           style={styles.backround}
         >
           <View style={styles.sourceInfos}>
