@@ -167,7 +167,7 @@ const Profile = () => {
 
             <Text style={styles.sectionTitle}>Compte</Text>
             <SettingItem icon="person-outline" label="Éditer le Profil" onPress={() => {}} />
-            <SettingItem icon="lock-closed-outline" label="Sécurité & Privacité" onPress={() => {}} />
+            <SettingItem icon="lock-closed-outline" label="Sécurité & Privacité" onPress={() => router.push("/pages/security")} />
             <SettingItem icon="language-outline" label="Langue" onPress={() => {}} />
 
             <Text style={styles.sectionTitle}>Support</Text>
