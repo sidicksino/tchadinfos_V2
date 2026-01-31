@@ -1,4 +1,4 @@
-# Welcome to your Expo app 👋
+# Welcome to your Expo app
 
 This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
 
@@ -49,7 +49,7 @@ Join our community of developers creating universal apps.
 - [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
 - [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
 
-## 📡 Live Streaming Configuration
+## Live Streaming Configuration
 
 To update the **Live TV** and **Radio** streams, you do NOT need to edit the code. Simply open the `.env` file in the root directory and update the following variables:
 
