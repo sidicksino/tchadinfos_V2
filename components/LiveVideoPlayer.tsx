@@ -19,11 +19,19 @@ export default function LiveVideoPlayer({ streamUrl, style }: Props) {
   useFocusEffect(
     useCallback(() => {
       // pivot: Resume playback when screen is focused
-      player.play();
+      try {
+        player.play();
+      } catch (e) {
+        console.log("Error playing video:", e);
+      }
 
       return () => {
         // pivot: Pause playback when screen loses focus
-        player.pause();
+        try {
+          player.pause();
+        } catch (e) {
+          console.log("Error pausing video (player likely destroyed):", e);
+        }
       };
     }, [player])
   );
