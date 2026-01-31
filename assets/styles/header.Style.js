@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+import { SHADOWS } from "@/constants/shadows";
 
 export const getStyles = (COLORS) =>
     StyleSheet.create({
@@ -42,16 +43,13 @@ export const getStyles = (COLORS) =>
             justifyContent: "space-between",
             flex: 1,
             height: 50, // Fixed height for alignment
-            backgroundColor: COLORS.glassSurface || 'rgba(255,255,255,0.05)',
+            backgroundColor: COLORS.card, // Solid color prevents Android shadow artifacts
             borderRadius: 14,
             paddingHorizontal: 15,
             borderWidth: 1,
             borderColor: COLORS.glassBorder || 'rgba(255,255,255,0.1)',
-            shadowColor: "#000",
-            shadowOffset: { width: 0, height: 2 },
-            shadowOpacity: 0.05,
-            shadowRadius: 4,
-            elevation: 2,
+            borderColor: COLORS.glassBorder || 'rgba(255,255,255,0.1)',
+            ...SHADOWS.small,
         },
         inputResearch: {
             flex: 1,

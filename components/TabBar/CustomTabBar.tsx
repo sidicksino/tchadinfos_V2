@@ -1,5 +1,6 @@
 import { View, TouchableOpacity, StyleSheet, Platform, useWindowDimensions } from 'react-native';
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
+import { SHADOWS } from "@/constants/shadows";
 import { BlurView } from 'expo-blur';
 import { Home, PlayCircle, Radio, Heart, User, LayoutGrid } from 'lucide-react-native';
 import TabIcon from './TabIcon';
@@ -152,11 +153,9 @@ const styles = StyleSheet.create({
     height: 70,
     borderRadius: 35,
     // overflow: 'visible' is default, creating explicit visible just in case
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.3,
-    shadowRadius: 20,
-    elevation: 10,
+    borderTopWidth: 1,
+    borderTopColor: "rgba(255,255,255,0.1)",
+    ...SHADOWS.large, // Replaces manual shadow/elevation
     alignSelf: 'center',
   },
   tabBar: {

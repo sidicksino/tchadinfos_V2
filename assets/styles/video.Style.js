@@ -1,4 +1,5 @@
 import { StyleSheet, Dimensions } from "react-native";
+import { SHADOWS } from "@/constants/shadows";
 
 const { width } = Dimensions.get("window");
 
@@ -56,12 +57,8 @@ export const getStyles = (COLORS) => StyleSheet.create({
         backgroundColor: COLORS.card,
         overflow: 'hidden',
         borderWidth: 1,
-        borderColor: COLORS.border,
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.1,
-        shadowRadius: 8,
-        elevation: 3,
+        borderColor: COLORS.glassBorder || "rgba(255,255,255,0.1)",
+        ...SHADOWS.medium,
     },
     thumbnailContainer: {
         width: '100%',
