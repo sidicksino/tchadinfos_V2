@@ -19,7 +19,7 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/ti_logo.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#001a4d"
       },
       "edgeToEdgeEnabled": true,
       "package": "com.sidick102.TchadInfos"
@@ -37,7 +37,7 @@
           "image": "./assets/images/ti_logo.png",
           "imageWidth": 200,
           "resizeMode": "contain",
-          "backgroundColor": "#ffffff"
+          "backgroundColor": "#001a4d"
         }
       ],
       "expo-font",

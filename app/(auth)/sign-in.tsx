@@ -20,6 +20,12 @@ export default function Page() {
 
   const onSignInPress = async () => {
     if (!isLoaded) return
+
+    if (!emailAddress.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+        alert("Veuillez entrer une adresse email valide.")
+        return
+    }
+
     setLoading(true)
 
     try {
@@ -36,8 +42,21 @@ export default function Page() {
         alert("Connexion incomplète. Vérifiez vos informations.")
       }
     } catch (err: any) {
-      console.error(JSON.stringify(err, null, 2))
-      alert(err.errors ? err.errors[0].message : "Erreur de connexion");
+      console.warn("Sign In Error:", JSON.stringify(err, null, 2))
+      
+      let message = "Erreur de connexion";
+      if (err.errors && err.errors.length > 0) {
+          const code = err.errors[0].code;
+          switch (code) {
+            case "form_identifier_not_found": message = "Adresse email introuvable. Veuillez vous inscrire."; break;
+            case "form_password_incorrect": message = "Mot de passe incorrect."; break;
+            case "form_param_format_invalid": message = "Format d'email invalide."; break;
+            case "too_many_attempts": message = "Trop de tentatives. Veuillez patienter un moment."; break;
+            case "strategy_for_user_invalid": message = "Méthode de connexion invalide."; break;
+            default: message = err.errors[0].longMessage || err.errors[0].message;
+          }
+      }
+      alert(message);
     } finally {
         setLoading(false)
     }

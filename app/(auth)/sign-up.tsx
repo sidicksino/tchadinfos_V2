@@ -19,9 +19,39 @@ export default function SignUpScreen() {
   const [code, setCode] = React.useState('')
   const [loading, setLoading] = React.useState(false)
 
+  // Helper to get friendly error message
+  const getErrorMessage = (err: any) => {
+    if (err.errors && err.errors.length > 0) {
+        const code = err.errors[0].code;
+        switch (code) {
+            case "form_identifier_exists": return "Ce compte existe déjà. Connectez-vous.";
+            case "form_password_pwned": return "Sécurité : Ce mot de passe a été trouvé dans une fuite de données. Choisissez-en un autre.";
+            case "form_password_length_too_short": return "Le mot de passe doit contenir au moins 8 caractères.";
+            case "form_param_format_invalid": return "Format d'email incorrect.";
+            case "verification_expired": return "Le code a expiré. Veuillez recommencer.";
+            case "verification_failed": return "Code de vérification incorrect.";
+            case "too_many_attempts": return "Trop de tentatives. Veuillez patienter un moment.";
+            case "verification_already_verified": return "already_verified"; // Special flag
+            default: return err.errors[0].longMessage || err.errors[0].message;
+        }
+    }
+    return "Une erreur est survenue.";
+  };
+
   // Handle submission of sign-up form
   const onSignUpPress = async () => {
     if (!isLoaded) return
+
+    if (!emailAddress.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+        alert("Veuillez entrer une adresse email valide.")
+        return
+    }
+
+    if (password.length < 8) {
+        alert("Le mot de passe doit contenir au moins 8 caractères.")
+        return
+    }
+
     setLoading(true)
 
     try {
@@ -33,8 +63,16 @@ export default function SignUpScreen() {
       await signUp.prepareEmailAddressVerification({ strategy: 'email_code' })
       setPendingVerification(true)
     } catch (err: any) {
-      console.error(JSON.stringify(err, null, 2))
-      alert(err.errors ? err.errors[0].message : "Erreur d'inscription")
+      console.warn("Sign Up Error:", JSON.stringify(err, null, 2))
+      const msg = getErrorMessage(err);
+      
+      if (msg === "Ce compte existe déjà. Connectez-vous.") {
+          // Optional: navigate to sign-in?
+          alert(msg);
+          // router.replace("/sign-in"); // Maybe too aggressive
+      } else {
+          alert(msg);
+      }
     } finally {
         setLoading(false)
     }
@@ -53,13 +91,32 @@ export default function SignUpScreen() {
       if (signUpAttempt.status === 'complete') {
         await setActive({ session: signUpAttempt.createdSessionId })
         router.replace('/(tabs)')
+      } else if (signUpAttempt.status === 'missing_requirements') {
+          console.error(JSON.stringify(signUpAttempt, null, 2))
+          alert("Inscription incomplète : " + signUpAttempt.missingFields.join(", ") + " manquant(s). Vérifiez votre configuration Clerk (désactivez Phone Number).")
       } else {
         console.error(JSON.stringify(signUpAttempt, null, 2))
-        alert("Vérification incomplète. Code incorrect ?")
+        alert("Vérification incomplète. Code incorrect ? Statut: " + signUpAttempt.status)
       }
     } catch (err: any) {
-      console.error(JSON.stringify(err, null, 2))
-      alert(err.errors ? err.errors[0].message : "Erreur de vérification")
+      console.warn("Verify Error:", JSON.stringify(err, null, 2))
+      
+      const msg = getErrorMessage(err);
+
+      // Handle "already verified" case specially
+      if (msg === "already_verified") {
+         if (signUp.status === 'complete' && signUp.createdSessionId) {
+             await setActive({ session: signUp.createdSessionId })
+             router.replace('/(tabs)')
+         } else {
+             // Fallback: If we can't activate session, tell them to login
+             alert("Ce compte est déjà vérifié. Veuillez vous connecter.")
+             router.replace('/sign-in')
+         }
+         return;
+      }
+
+      alert(msg)
     } finally {
         setLoading(false)
     }
@@ -68,38 +125,42 @@ export default function SignUpScreen() {
   if (pendingVerification) {
     return (
       <SafeScreenScondaire>
-         <View style={styles.container}>
-            <View style={styles.content}>
-                <View style={styles.headerContainer}>
-                     <View style={styles.logoContainer}>
-                         <Ionicons name="shield-checkmark-outline" size={40} color={COLORS.neon} />
-                    </View>
-                    <Text style={styles.title}>Vérification</Text>
-                    <Text style={styles.subtitle}>Un code a été envoyé à {emailAddress}</Text>
-                </View>
-
-                <View style={styles.formContainer}>
-                     <View style={styles.inputContainer}>
-                        <Text style={styles.label}>Code de vérification</Text>
-                        <View style={styles.inputWrapper}>
-                            <Ionicons name="key-outline" size={20} color={COLORS.textLight} />
-                            <TextInput
-                                value={code}
-                                placeholder="123456"
-                                placeholderTextColor={COLORS.textLight}
-                                onChangeText={(code) => setCode(code)}
-                                style={styles.input}
-                                keyboardType="number-pad"
-                            />
+        <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={{flex: 1}}>
+          <ScrollView contentContainerStyle={{flexGrow: 1}} keyboardShouldPersistTaps="handled">
+             <View style={styles.container}>
+                <View style={styles.content}>
+                    <View style={styles.headerContainer}>
+                         <View style={styles.logoContainer}>
+                             <Ionicons name="shield-checkmark-outline" size={40} color={COLORS.neon} />
                         </View>
+                        <Text style={styles.title}>Vérification</Text>
+                        <Text style={styles.subtitle}>Un code a été envoyé à {emailAddress}</Text>
                     </View>
 
-                    <TouchableOpacity onPress={onVerifyPress} style={styles.button} disabled={loading}>
-                        {loading ? <ActivityIndicator color="#000" /> : <Text style={styles.buttonText}>Vérifier</Text>}
-                    </TouchableOpacity>
+                    <View style={styles.formContainer}>
+                         <View style={styles.inputContainer}>
+                            <Text style={styles.label}>Code de vérification</Text>
+                            <View style={styles.inputWrapper}>
+                                <Ionicons name="key-outline" size={20} color={COLORS.textLight} />
+                                <TextInput
+                                    value={code}
+                                    placeholder="123456"
+                                    placeholderTextColor={COLORS.textLight}
+                                    onChangeText={(code) => setCode(code)}
+                                    style={styles.input}
+                                    keyboardType="number-pad"
+                                />
+                            </View>
+                        </View>
+
+                        <TouchableOpacity onPress={onVerifyPress} style={styles.button} disabled={loading}>
+                            {loading ? <ActivityIndicator color="#000" /> : <Text style={styles.buttonText}>Vérifier</Text>}
+                        </TouchableOpacity>
+                    </View>
                 </View>
-            </View>
-         </View>
+             </View>
+          </ScrollView>
+        </KeyboardAvoidingView>
       </SafeScreenScondaire>
     )
   }
@@ -147,6 +208,9 @@ export default function SignUpScreen() {
                                     style={styles.input}
                                 />
                             </View>
+                            <Text style={{color: COLORS.textLight, fontSize: 12, marginLeft: 4}}>
+                                Minimum 8 caractères
+                            </Text>
                         </View>
 
                         <TouchableOpacity onPress={onSignUpPress} style={styles.button} disabled={loading}>
