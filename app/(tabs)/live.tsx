@@ -7,6 +7,7 @@ import { Text, TouchableOpacity, View, Image, ScrollView, Animated, ActivityIndi
 import { StatusBar } from "expo-status-bar";
 import LiveVideoPlayer from "@/components/LiveVideoPlayer";
 import { useRadio } from "@/hooks/useRadio";
+import Logo from "../../assets/logo.svg";
 
 const Live = () => {
   const { COLORS, isDarkMode } = useContext(ThemeContext);
@@ -53,7 +54,7 @@ const Live = () => {
       <View style={styles.container}>
         {/* Header */}
         <View style={styles.header}>
-            <Text style={styles.headerTitle}>Direct</Text>
+            <Logo width={120} height={35} fill={COLORS.text} />
             <View style={styles.liveBadge}>
                 <Animated.View style={[styles.liveDot, { opacity: fadeAnim }]} />
                 <Text style={styles.liveText}>EN DIRECT</Text>
