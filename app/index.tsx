@@ -1,8 +1,8 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import React, { useCallback, useState } from 'react';
-import { Dimensions, FlatList, StyleSheet, Text, TouchableOpacity, View, ViewToken } from 'react-native';
+import React, { useCallback, useState, useEffect } from 'react';
+import { Dimensions, FlatList, StyleSheet, Text, TouchableOpacity, View, ViewToken, Platform, StatusBar as RNStatusBar } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Animated, { useAnimatedRef, useAnimatedScrollHandler, useSharedValue } from 'react-native-reanimated';
 
@@ -18,6 +18,15 @@ export default function Onboarding() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const flatListRef = useAnimatedRef<FlatList<OnboardingData>>();
   const x = useSharedValue(0);
+
+  // Force Status Bar to Light Content (White Text)
+  useEffect(() => {
+    RNStatusBar.setBarStyle('light-content');
+    if (Platform.OS === 'android') {
+        RNStatusBar.setTranslucent(true);
+        RNStatusBar.setBackgroundColor('transparent');
+    }
+  }, []);
 
   const scrollHandler = useAnimatedScrollHandler({
     onScroll: (event) => {
@@ -49,7 +58,8 @@ export default function Onboarding() {
 
   return (
     <View style={styles.container}>
-      <StatusBar style="light" />
+      {/* Force Status Bar to be Light (White Text) and Transparent */}
+      <StatusBar style="light" backgroundColor="transparent" translucent={true} />
       
       {/* Background Gradient */}
       <LinearGradient
