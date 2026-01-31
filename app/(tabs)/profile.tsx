@@ -1,132 +1,144 @@
-import LogoRouge from "@/assets/images/logoRouge.svg";
-import { getStyles } from "@/assets/styles/profile.Style";
-import SafeScreenScondaire from "@/components/SafeScreenScondaaire";
-import HeaderSecondaire from "@/components/headerSecondaire";
-import { ThemeContext } from "@/context/ThemeContext";
-import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
-import AntDesign from "@expo/vector-icons/AntDesign";
-import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
-import { useRouter } from "expo-router";
 import React, { useContext, useState } from "react";
-import { Image, Text, TouchableOpacity, View } from "react-native";
+import { View, Text, Image, TouchableOpacity, ScrollView, Switch } from "react-native";
+import { useRouter } from "expo-router";
+import { Ionicons, MaterialCommunityIcons, FontAwesome5 } from "@expo/vector-icons";
+import { StatusBar } from "expo-status-bar";
+import { ThemeContext } from "@/context/ThemeContext";
+import SafeScreenScondaire from "@/components/SafeScreenScondaaire";
+import { getStyles } from "@/assets/styles/profile.Style";
+// Assuming LogoRouge is not needed in the new design or used differently
+// import LogoRouge from "@/assets/images/logoRouge.svg"; 
 
-const profile = () => {
+const Profile = () => {
   const router = useRouter();
-  const [isLoged, setIsLoading] = useState(false);
-  const { COLORS } = useContext(ThemeContext);
+  const { COLORS, isDarkMode, toggleTheme } = useContext(ThemeContext);
   const styles = getStyles(COLORS);
 
-  const AboutHandled = () => {
-      router.push("/pages/about");
+  // Mock Data for UI
+  const user = {
+    name: "Sidick Abdoulaye",
+    email: "sidick.abdoulaye@tech.td",
+    avatar: "https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&w=2080&auto=format&fit=crop",
+    isPremium: true
   };
+
+  // State for toggles
+  const [notificationsEnabled, setNotificationsEnabled] = useState(true);
+
+  // Render a single setting row
+  const SettingItem = ({ icon, label, type = "link", onPress, color, value, onValueChange }: any) => (
+    <TouchableOpacity 
+        style={styles.menuItem} 
+        onPress={type === "link" ? onPress : undefined}
+        activeOpacity={type === "link" ? 0.7 : 1}
+    >
+        <View style={styles.menuLeft}>
+            <View style={styles.iconBox}>
+                <Ionicons name={icon} size={22} color={color || COLORS.text} />
+            </View>
+            <Text style={[styles.menuText, color && { color }]}>{label}</Text>
+        </View>
+        
+        {type === "toggle" ? (
+            <Switch
+                trackColor={{ false: "#767577", true: COLORS.neon || "#00d4ff" }}
+                thumbColor={isDarkMode ? "#f4f3f4" : "#f4f3f4"}
+                ios_backgroundColor="#3e3e3e"
+                onValueChange={onValueChange}
+                value={value}
+            />
+        ) : (
+            <Ionicons name="chevron-forward" size={20} color={COLORS.textLight} />
+        )}
+    </TouchableOpacity>
+  );
 
   return (
     <SafeScreenScondaire>
-      {isLoged ? (
-        <>
-          <HeaderSecondaire />
-          <View style={styles.contenair}>
-            <TouchableOpacity style={styles.registerButton}>
-              <Text style={styles.buttonTextLive}>Register</Text>
-            </TouchableOpacity>
-          </View>
-        </>
-      ) : (
-        <>
-          <View style={styles.headerLoged}>
-            <LogoRouge />
-            <View>
-              <Image
-                source={require("../../assets/images/phote.jpeg")}
-                style={styles.avatar}
-              />
-              <TouchableOpacity style={styles.editIcon}>
-                <MaterialCommunityIcons
-                  name="camera-plus-outline"
-                  size={24}
-                  color={COLORS.primary}
-                />
-              </TouchableOpacity>
-            </View>
+      <StatusBar style={isDarkMode ? "light" : "dark"} />
+      <ScrollView 
+        contentContainerStyle={styles.container} 
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={styles.headerSpace} />
 
-            <Text style={styles.userName}>Sidick Abdoulaye</Text>
-            <Text style={styles.userEmail}>sidickabdoulayesino1@gmail.com</Text>
-          </View>
-          <View style={styles.contenair}>
-            <View style={styles.setting}>
-              <View style={styles.content}>
-                <TouchableOpacity style={styles.profileSetting}>
-                  <View style={styles.flex}>
-                    <FontAwesome6
-                      name="contact-book"
-                      size={24}
-                      color={COLORS.text}
-                    />
-                    <Text style={styles.text}>Contact</Text>
-                  </View>
-                  <AntDesign name="right" size={24} color={COLORS.text} />
-                </TouchableOpacity>
-              </View>
-              <View style={styles.content}>
-                <TouchableOpacity style={styles.profileSetting}>
-                  <View style={styles.flex}>
-                    <Ionicons
-                      name="language-outline"
-                      size={24}
-                      color={COLORS.text}
-                    />
-                    <Text style={styles.text}>Langue</Text>
-                  </View>
-                  <AntDesign name="right" size={24} color={COLORS.text} />
-                </TouchableOpacity>
-              </View>
-              <View style={styles.content}>
-                <TouchableOpacity style={styles.profileSetting} onPress={AboutHandled}>
-                  <View style={styles.flex}>
-                    <AntDesign
-                      name="info-circle"
-                      size={24}
-                      color={COLORS.text}
-                    />
-                    <Text style={styles.text}>À propos</Text>
-                  </View>
-                  <AntDesign name="right" size={24} color={COLORS.text} />
-                </TouchableOpacity>
-              </View>
-              <View style={styles.content}>
-                <TouchableOpacity style={styles.profileSetting}>
-                  <View style={styles.flex}>
-                    <Ionicons
-                      name="invert-mode"
-                      size={24}
-                      color={COLORS.text}
-                    />
-                    <Text style={styles.text}>Theme</Text>
-                  </View>
-                  <AntDesign name="right" size={24} color={COLORS.text} />
-                </TouchableOpacity>
-              </View>
-              <View style={styles.content}>
-                <TouchableOpacity style={styles.profileSetting}>
-                  <View style={styles.flex}>
-                    <Ionicons
-                      name="log-out-outline"
-                      size={24}
-                      color={COLORS.primary}
-                    />
-                    <Text style={[styles.text, { color: COLORS.primary }]}>
-                      Déconnexion
-                    </Text>
-                  </View>
-                  <AntDesign name="right" size={24} color={COLORS.primary} />
-                </TouchableOpacity>
-              </View>
+        {/* User Card */}
+        <View style={styles.profileHeader}>
+            <View style={styles.userCard}>
+                <View style={styles.avatarContainer}>
+                    <Image source={{ uri: user.avatar }} style={styles.avatar} />
+                    <TouchableOpacity style={styles.editBadge}>
+                        <MaterialCommunityIcons name="pencil" size={16} color="#fff" />
+                    </TouchableOpacity>
+                </View>
+                
+                <Text style={styles.userName}>{user.name}</Text>
+                <Text style={styles.userEmail}>{user.email}</Text>
+
+                {/* Badge removed as requested */}
+
+                {/* Stats Row */}
+                <View style={styles.statsRow}>
+                    <View style={styles.statItem}>
+                        <Text style={styles.statNumber}>124</Text>
+                        <Text style={styles.statLabel}>Lectures</Text>
+                    </View>
+                    <View style={styles.statItem}>
+                        <Text style={styles.statNumber}>42</Text>
+                        <Text style={styles.statLabel}>Favoris</Text>
+                    </View>
+                    <View style={styles.statItem}>
+                        <Text style={styles.statNumber}>12j</Text>
+                        <Text style={styles.statLabel}>Série</Text>
+                    </View>
+                </View>
             </View>
-          </View>
-        </>
-      )}
+        </View>
+
+        {/* Settings Sections */}
+        <View style={styles.settingsContainer}>
+            
+            <Text style={styles.sectionTitle}>Préférences</Text>
+            <SettingItem 
+                icon="moon-outline" 
+                label="Mode Sombre" 
+                type="toggle" 
+                value={isDarkMode}
+                onValueChange={toggleTheme}
+            />
+            <SettingItem 
+                icon="notifications-outline" 
+                label="Notifications" 
+                type="toggle" 
+                value={notificationsEnabled}
+                onValueChange={setNotificationsEnabled}
+            />
+
+            <Text style={styles.sectionTitle}>Compte</Text>
+            <SettingItem icon="person-outline" label="Éditer le Profil" onPress={() => {}} />
+            <SettingItem icon="lock-closed-outline" label="Sécurité & Privacité" onPress={() => {}} />
+            <SettingItem icon="language-outline" label="Langue" onPress={() => {}} />
+
+            <Text style={styles.sectionTitle}>Support</Text>
+            <SettingItem icon="help-circle-outline" label="Aide & FAQ" onPress={() => {}} />
+            <SettingItem icon="information-circle-outline" label="À propos" onPress={() => router.push("/pages/about")} />
+            
+            <View style={{ height: 20 }} />
+            <SettingItem 
+                icon="log-out-outline" 
+                label="Déconnexion" 
+                color="#ef4444"
+                onPress={() => console.log("Logout")} 
+            />
+            
+            <Text style={{ textAlign: 'center', marginTop: 30, color: COLORS.textLight, fontSize: 12 }}>
+                TchadInfos V2.0.1 • Build 2026
+            </Text>
+        </View>
+
+      </ScrollView>
     </SafeScreenScondaire>
   );
 };
 
-export default profile;
+export default Profile;
