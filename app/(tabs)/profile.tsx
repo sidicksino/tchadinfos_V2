@@ -23,6 +23,7 @@ const Profile = () => {
   
   const { newsBookmarks = [], videoBookmarks = [] } = useContext(FavoritesContext) || {};
   const [readCount, setReadCount] = useState(0);
+  const [imageError, setImageError] = useState(false);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -91,13 +92,27 @@ const Profile = () => {
                 {isSignedIn ? (
                     <>
                         <View style={styles.avatarContainer}>
-                            <Image source={{ uri: user?.imageUrl }} style={styles.avatar} />
+                            {user?.imageUrl && !imageError ? (
+                                <Image 
+                                    source={{ uri: user?.imageUrl }} 
+                                    style={styles.avatar} 
+                                    onError={() => setImageError(true)}
+                                />
+                            ) : (
+                                <View style={[styles.avatar, { backgroundColor: COLORS.card, justifyContent: 'center', alignItems: 'center' }]}>
+                                     <Text style={{ fontSize: 32, fontWeight: 'bold', color: COLORS.neon }}>
+                                        {user?.firstName?.charAt(0) || user?.primaryEmailAddress?.emailAddress?.charAt(0).toUpperCase() || "U"}
+                                     </Text>
+                                </View>
+                            )}
                             <TouchableOpacity style={styles.editBadge}>
                                 <MaterialCommunityIcons name="pencil" size={16} color="#fff" />
                             </TouchableOpacity>
                         </View>
                         
-                        <Text style={styles.userName}>{user?.fullName || user?.firstName || "Utilisateur"}</Text>
+                        <Text style={styles.userName}>
+                            {user.username || user?.firstName || user?.primaryEmailAddress?.emailAddress?.split('@')[0] || "Utilisateur"}
+                        </Text>
                         <Text style={styles.userEmail}>{user?.primaryEmailAddress?.emailAddress}</Text>
 
                         {/* Stats Row */}
