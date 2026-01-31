@@ -181,7 +181,7 @@ export default function FAQ() {
                     <Text style={styles.contactTitle}>Besoin d'aide ?</Text>
                     <Text style={styles.contactText}>Notre équipe est disponible pour vous aider.</Text>
                     
-                    <TouchableOpacity style={styles.contactButton} onPress={() => {/* Linking to email */}}>
+                    <TouchableOpacity style={styles.contactButton} onPress={() => router.push("/pages/contact")}>
                         <Ionicons name="mail-outline" size={20} color="#000" />
                         <Text style={styles.contactButtonText}>Nous Contacter</Text>
                     </TouchableOpacity>
