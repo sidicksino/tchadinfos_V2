@@ -86,9 +86,6 @@ const Live = () => {
                     <TouchableOpacity style={styles.playButton}>
                         <Ionicons name="play" size={32} color="#fff" style={{ marginLeft: 4 }} />
                     </TouchableOpacity>
-                    <Text style={{ color: '#fff', marginTop: 10, fontWeight: '600', letterSpacing: 1 }}>
-                        {mode === 'video' ? '📺 TCHADINFOS TV' : '📻 RADIO FM LIVE'}
-                    </Text>
                 </View>
             </View>
 
