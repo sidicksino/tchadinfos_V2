@@ -42,6 +42,11 @@ export default function SignUpScreen() {
   const onSignUpPress = async () => {
     if (!isLoaded) return
 
+    if (!emailAddress || !password) {
+        alert("Veuillez remplir tous les champs.")
+        return
+    }
+
     if (!emailAddress.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
         alert("Veuillez entrer une adresse email valide.")
         return
