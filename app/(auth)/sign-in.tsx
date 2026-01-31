@@ -7,6 +7,7 @@ import { getStyles } from "@/assets/styles/auth.Style";
 import SafeScreenScondaire from "@/components/SafeScreenScondaaire";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
+import SocialAuth from "@/components/SocialAuth";
 
 export default function Page() {
   const { signIn, setActive, isLoaded } = useSignIn()
@@ -127,6 +128,8 @@ export default function Page() {
                             )}
                         </TouchableOpacity>
                     </View>
+
+                    <SocialAuth />
 
                     <View style={styles.footer}>
                         <Text style={styles.footerText}>Pas encore de compte ?</Text>

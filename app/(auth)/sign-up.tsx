@@ -6,6 +6,7 @@ import { ThemeContext } from "@/context/ThemeContext";
 import { getStyles } from "@/assets/styles/auth.Style";
 import SafeScreenScondaire from "@/components/SafeScreenScondaaire";
 import { Ionicons } from "@expo/vector-icons";
+import SocialAuth from "@/components/SocialAuth";
 
 export default function SignUpScreen() {
   const { isLoaded, signUp, setActive } = useSignUp()
@@ -222,6 +223,8 @@ export default function SignUpScreen() {
                              {loading ? <ActivityIndicator color="#000" /> : <Text style={styles.buttonText}>Continuer</Text>}
                         </TouchableOpacity>
                     </View>
+
+                    <SocialAuth />
 
                     <View style={styles.footer}>
                         <Text style={styles.footerText}>Déjà un compte ?</Text>
