@@ -62,3 +62,42 @@ EXPO_PUBLIC_RADIO_STREAM_URL=https://your-radio-stream.mp3
 ```
 
 > **Note:** After changing the `.env` file, you may need to restart the development server (`npx expo start -c`) for changes to take effect.
+
+## Development & Build Guide
+
+### 1. Initialize EAS (Expo Application Services)
+To link your project to EAS, run:
+
+```bash
+eas init
+```
+**Output:**
+- Project created for `@sidick102/TchadInfos`
+- Project ID: `213ead18-5838-482e-940c-8045a9fe50c2`
+
+### 2. Install Development Client
+For native modules support (e.g., `expo-video`, `expo-av`), install the dev client:
+
+```bash
+npx expo install expo-dev-client
+```
+
+### 3. Configure Build
+Generate the `eas.json` configuration file:
+
+```bash
+eas build:configure
+```
+Select **All** platforms when prompted.
+
+### 4. Create Development Build (Android)
+To compile a standalone Android build that includes all native libraries:
+
+```bash
+eas build --profile development --platform android
+```
+
+**Steps:**
+- **App ID**: `com.sidick102.TchadInfos`
+- **Keystore**: Generated automatically.
+- **Result**: You will receive a QR code and link to install the APK on your device.
