@@ -16,10 +16,10 @@ const Live = () => {
   // Pulse Animation for Live Dot
   const fadeAnim = useRef(new Animated.Value(1)).current;
 
-  // STREAM URLS (Replace with real TchadInfos streams)
-  // Using a stable HLS test stream for debugging
-  const VIDEO_STREAM_URL = "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8"; 
-  const RADIO_STREAM_URL = "https://direct.franceinfo.fr/live/franceinfo-midfi.mp3"; // Example: France Info
+  // STREAM URLS
+  // Sourced from .env file (See README.md for setup)
+  const VIDEO_STREAM_URL = process.env.EXPO_PUBLIC_TV_STREAM_URL || "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8"; 
+  const RADIO_STREAM_URL = process.env.EXPO_PUBLIC_RADIO_STREAM_URL || "https://direct.franceinfo.fr/live/franceinfo-midfi.mp3";
   
   const { isPlaying: isRadioPlaying, toggleRadio, isLoading: isRadioLoading } = useRadio(RADIO_STREAM_URL);
 

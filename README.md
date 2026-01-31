@@ -48,3 +48,17 @@ Join our community of developers creating universal apps.
 
 - [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
 - [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+
+## 📡 Live Streaming Configuration
+
+To update the **Live TV** and **Radio** streams, you do NOT need to edit the code. Simply open the `.env` file in the root directory and update the following variables:
+
+```bash
+# TV Direct -> Must be an HLS stream (.m3u8)
+EXPO_PUBLIC_TV_STREAM_URL=https://your-hls-stream-url.m3u8
+
+# Radio Direct -> Can be MP3, AAC, or standard audio stream
+EXPO_PUBLIC_RADIO_STREAM_URL=https://your-radio-stream.mp3
+```
+
+> **Note:** After changing the `.env` file, you may need to restart the development server (`npx expo start -c`) for changes to take effect.
