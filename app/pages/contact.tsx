@@ -1,10 +1,11 @@
 import React, { useContext, useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet, ActivityIndicator, Alert, Linking } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet, ActivityIndicator, Alert } from "react-native";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { ThemeContext } from "@/context/ThemeContext";
 import SafeScreenScondaire from "@/components/SafeScreenScondaaire";
 import { useUser } from "@clerk/clerk-expo";
+import axios from "axios";
 
 export default function Contact() {
     const router = useRouter();
@@ -24,23 +25,41 @@ export default function Contact() {
         }
 
         setLoading(true);
-        
-        // Simulate network delay for better UX feeling
-        setTimeout(() => {
-            const mailtoUrl = `mailto:contact@tchadinfos.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(`Nom: ${name}\nEmail: ${email}\n\nMessage:\n${message}`)}`;
-            
-            Linking.canOpenURL(mailtoUrl).then(supported => {
-                if (supported) {
-                    Linking.openURL(mailtoUrl);
-                    Alert.alert("Succès", "Votre application de messagerie a été ouverte.");
-                    router.back();
-                } else {
-                    Alert.alert("Erreur", "Aucune application de messagerie n'est installée.");
-                }
-            }).catch(err => console.error("An error occurred", err))
-            .finally(() => setLoading(false));
 
-        }, 1000);
+        const data = {
+            service_id: 'service_c4vcw6c',
+            template_id: 'template_1b290dh',
+            user_id: 'DGu360jLgTiYGNW6H',
+            template_params: {
+                from_name: name,
+                from_email: email,
+                subject: subject,
+                message: message,
+            }
+        };
+
+        try {
+            await axios.post('https://api.emailjs.com/api/v1.0/email/send', data, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'origin': 'http://localhost',
+                    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.114 Safari/537.36'
+                }
+            });
+            Alert.alert("Succès", "Votre message a été envoyé avec succès !");
+            router.back();
+        } catch (error: any) {
+            console.error("EmailJS Error:", error);
+            if (error.response) {
+                console.error("Response Data:", error.response.data);
+                console.error("Response Status:", error.response.status);
+                Alert.alert("Erreur", `L'envoi a échoué: ${error.response.data || "Erreur inconnue"}`);
+            } else {
+                Alert.alert("Erreur", "Problème de connexion internet ou configuration.");
+            }
+        } finally {
+            setLoading(false);
+        }
     };
 
     const styles = StyleSheet.create({
