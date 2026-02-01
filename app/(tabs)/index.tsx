@@ -2,7 +2,7 @@ import SafeScreen from "@/components/SafeScreen";
 import axios from "axios";
 import { Link } from "expo-router";
 import React, { useContext, useEffect, useState } from "react";
-import { FlatList, Text, TouchableOpacity, View } from "react-native";
+import { SectionList, Text, TouchableOpacity, View } from "react-native";
 import { getStyles } from "../../assets/styles/home.Style";
 import BreakingNews from "../../components/breakingNwes";
 import Categories from "../../components/categories";
@@ -73,11 +73,12 @@ const index = () => {
     <SafeScreen>
       <View style={styles.container}>
         <Header />
-        <FlatList
-          data={news}
-          keyExtractor={(item) => item.article_id}
+        <SectionList
+          sections={[{ data: news }]}
+          keyExtractor={(item, index) => item.article_id + index}
           showsVerticalScrollIndicator={false}
           renderItem={renderNewsItem}
+          stickySectionHeadersEnabled={true}
           ListHeaderComponent={
             <>
               {isLoading ? (
@@ -88,11 +89,13 @@ const index = () => {
                   <TodayList newsList={breakingNews} />
                 </>
               )}
-              <View style={{ marginBottom: 20 }}>
-                <Categories onCategoryChanged={onCatChanged} />
-              </View>
             </>
           }
+          renderSectionHeader={() => (
+            <View style={{ marginBottom: 20, backgroundColor: COLORS.background || '#fff' }}> 
+              <Categories onCategoryChanged={onCatChanged} />
+            </View>
+          )}
           ListEmptyComponent={!isLoading ? <Text style={{ textAlign: 'center', marginTop: 20 }}>Aucune actualité trouvée</Text> : null}
           contentContainerStyle={{ paddingBottom: 110 }}
           // Performance Optimizations
@@ -100,9 +103,6 @@ const index = () => {
           maxToRenderPerBatch={5}
           windowSize={5}
           removeClippedSubviews={true}
-          getItemLayout={(data, index) => (
-            { length: 162, offset: 162 * index, index }
-          )}
         />
       </View>
     </SafeScreen>
