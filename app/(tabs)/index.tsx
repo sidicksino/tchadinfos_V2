@@ -2,7 +2,7 @@ import SafeScreen from "@/components/SafeScreen";
 import axios from "axios";
 import { Link } from "expo-router";
 import React, { useContext, useEffect, useState } from "react";
-import { SectionList, Text, TouchableOpacity, View } from "react-native";
+import { SectionList, Text, TouchableOpacity, View, Dimensions } from "react-native";
 import { getStyles } from "../../assets/styles/home.Style";
 import BreakingNews from "../../components/breakingNwes";
 import Categories from "../../components/categories";
@@ -19,6 +19,7 @@ const index = () => {
   const [breakingNews, setBreakingNews] = useState<NewsDataType[]>([]);
   const [news, setNews] = useState<NewsDataType[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isCategoryLoading, setIsCategoryLoading] = useState(false);
 
   useEffect(() => {
     getBreakingNews();
@@ -48,16 +49,22 @@ const index = () => {
       const response = await axios.get(URL);
       if (response && response.data) {
         setNews(response.data.results);
-        setIsLoading(false);
+        if (news.length === 0) setIsLoading(false); // Initial load
+        setIsCategoryLoading(false); // Category switch load
       }
     } catch (err: any) {
       console.error("Error fetching breaking news:", err.message);
+      setIsCategoryLoading(false);
+      setIsLoading(false);
     }
   };
 
   const onCatChanged = (category: string) => {
     console.log("Categories", category);
-    setNews([]);
+    if (!isLoading) {
+       setIsCategoryLoading(true);
+       setNews([]); // Clear current list to show we are fetching new one, but maintain height via ListEmptyComponent
+    }
     getNews(category);
   };
 
@@ -96,7 +103,16 @@ const index = () => {
               <Categories onCategoryChanged={onCatChanged} />
             </View>
           )}
-          ListEmptyComponent={!isLoading ? <Text style={{ textAlign: 'center', marginTop: 20 }}>Aucune actualité trouvée</Text> : null}
+          ListEmptyComponent={null}
+          ListFooterComponent={
+            isCategoryLoading ? (
+              <View style={{ minHeight: Dimensions.get('window').height, paddingTop: 20 }}>
+                 <Loading size={"large"} />
+              </View>
+            ) : (
+                (!isLoading && news.length === 0) ? <Text style={{ textAlign: 'center', marginTop: 20 }}>Aucune actualité trouvée</Text> : null
+            )
+          }
           contentContainerStyle={{ paddingBottom: 110 }}
           // Performance Optimizations
           initialNumToRender={5}
