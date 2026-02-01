@@ -1,6 +1,6 @@
 import { YouTubeVideo } from "@/services/youtubeService";
 import { Ionicons } from "@expo/vector-icons";
-import React from "react";
+import React, { useContext } from "react";
 import {
   FlatList,
   Image,
@@ -10,11 +10,11 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-// Remplace SafeAreaView par useSafeAreaInsets
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import YoutubePlayer from "react-native-youtube-iframe";
 
 import { FavoritesContext } from "@/context/FavoritesContext";
+import { ThemeContext } from "@/context/ThemeContext";
 
 type Props = {
   videoList: YouTubeVideo[];
@@ -22,23 +22,46 @@ type Props = {
 
 const VideoNewsScreen = ({ videoList }: Props) => {
   const [selectedVideoId, setSelectedVideoId] = React.useState<string | null>(null);
-  const context = React.useContext(FavoritesContext);
-  // Default fallbacks if context is undefined
+  const { COLORS, isDarkMode } = useContext(ThemeContext);
+  const context = useContext(FavoritesContext);
+  
   const { isVideoFavorite, toggleVideoFavorite } = context || {
       isVideoFavorite: () => false,
       toggleVideoFavorite: async () => {} 
   };
   
   const insets = useSafeAreaInsets();
-  // No local state needed for favorites anymore, simplified!
+
+  // Dynamic Styles based on Theme
+  const dynamicStyles = {
+      container: {
+          backgroundColor: isDarkMode ? COLORS.background : "#f5f5f5",
+      },
+      card: {
+          backgroundColor: isDarkMode ? COLORS.card : "white",
+          shadowColor: isDarkMode ? "#000" : "#000",
+          shadowOpacity: isDarkMode ? 0.3 : 0.1,
+          borderColor: isDarkMode ? COLORS.glassBorder : 'transparent',
+          borderWidth: isDarkMode ? 1 : 0,
+      },
+      title: {
+          color: isDarkMode ? COLORS.text : "#333",
+      },
+      source: {
+          color: isDarkMode ? COLORS.textLight : "#777",
+      },
+      backButton: {
+          backgroundColor: isDarkMode ? COLORS.glassSurface : "#f0f0f0",
+      }
+  };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, dynamicStyles.container]}>
       <FlatList
         data={videoList}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <View style={styles.videoCard}>
+          <View style={[styles.videoCard, dynamicStyles.card]}>
             {/* Thumbnail cliquable */}
             <TouchableOpacity
               onPress={() => setSelectedVideoId(item.id)}
@@ -58,25 +81,26 @@ const VideoNewsScreen = ({ videoList }: Props) => {
             </TouchableOpacity>
 
             <View style={styles.flexFavorite}>
-              <Text style={styles.title} numberOfLines={2}>{item.title}</Text>
+              <Text style={[styles.title, dynamicStyles.title]} numberOfLines={2}>{item.title}</Text>
               <TouchableOpacity
                 onPress={() => toggleVideoFavorite(videoList.find(v => v.id === item.id) || item)}
-                style={styles.backButton}
+                style={[styles.backButton, dynamicStyles.backButton]}
               >
                 <Ionicons 
                     name={isVideoFavorite(item.id) ? "heart" : "heart-outline"} 
-                    color={isVideoFavorite(item.id) ? "red" : "#000"} 
+                    color={isVideoFavorite(item.id) ? (COLORS.neon || "red") : (isDarkMode ? COLORS.text : "#000")} 
                     size={22} 
                 />
               </TouchableOpacity>
             </View>
 
-            <Text style={styles.source}>
+            <Text style={[styles.source, dynamicStyles.source]}>
               {item.channelTitle} -{" "}
               {new Date(item.publishedAt).toLocaleDateString("fr-FR")}
             </Text>
           </View>
         )}
+        contentContainerStyle={{ paddingBottom: 100 }}
       />
 
       {/* MODAL PLEIN ÉCRAN */}
@@ -107,8 +131,7 @@ const VideoNewsScreen = ({ videoList }: Props) => {
                 videoId={selectedVideoId}
                 onChangeState={(state: string) => {
                     if (state === "ended") {
-                        // Optional: close modal when video ends?
-                        // setSelectedVideoId(null);
+                        // Optional
                     }
                 }}
                 />
@@ -124,18 +147,14 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 10,
-    backgroundColor: "#f5f5f5",
-    marginBottom: 50,
+    marginBottom: 0, // Handled by contentContainerStyle
   },
   videoCard: {
     marginBottom: 20,
-    backgroundColor: "white",
     borderRadius: 12,
     padding: 12,
     elevation: 3,
-    shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
     shadowRadius: 4,
   },
   thumbnail: {
@@ -158,13 +177,11 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
     marginTop: 8,
-    color: "#333",
     lineHeight: 20,
     width: '85%' // leave space for heart button
   },
   source: {
     fontSize: 12,
-    color: "#777",
     marginVertical: 4,
   },
   
@@ -206,7 +223,6 @@ const styles = StyleSheet.create({
   backButton: {
     width: 40,
     height: 40,
-    backgroundColor: "#f0f0f0",
     borderRadius: 20,
     justifyContent: "center",
     alignItems: "center",
