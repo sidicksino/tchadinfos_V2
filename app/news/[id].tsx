@@ -16,6 +16,7 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 import { NewsDataType } from "../../types/index";
 import { ThemeContext } from "@/context/ThemeContext";
+import { FavoritesContext } from "@/context/FavoritesContext";
 import { getStyles } from "../../assets/styles/newsDetails.Style";
 
 type Props = {};
@@ -29,7 +30,7 @@ const NewsDetails = (props: Props) => {
   const [news, setNews] = useState<NewsDataType[]>([]);
   const [relatedNews, setRelatedNews] = useState<NewsDataType[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [bookmark, setBookmark] = useState(false);
+  const { isNewsFavorite, toggleNewsFavorite } = useContext(FavoritesContext) || { isNewsFavorite: () => false, toggleNewsFavorite: async () => {} };
 
   useEffect(() => {
     getNews();
@@ -66,51 +67,10 @@ const NewsDetails = (props: Props) => {
       }
   };
 
-  const renderBookmark = async (newsId: string) => {
-    try {
-      const token = await AsyncStorage.getItem("bookmark");
-      const res: string[] = token ? JSON.parse(token) : [];
-      setBookmark(res.includes(newsId)); 
-    } catch (error) {
-      console.error("Error fetching bookmarks:", error);
-    }
-  };
 
-  const saveBookmark = async (newsId: string) => {
-    try {
-      const token = await AsyncStorage.getItem("bookmark");
-      const res: string[] = token ? JSON.parse(token) : [];
-
-      if (!res.includes(newsId)) {
-        res.push(newsId);
-        await AsyncStorage.setItem("bookmark", JSON.stringify(res));
-        setBookmark(true);
-        // alert("News Saved!"); // Removed alert for smoother UX, maybe add toast later
-      } else {
-        // alert("Already bookmarked!");
-      }
-    } catch (error) {
-      console.error("Error saving bookmark:", error);
-    }
-  };
-
-  const removeBookmark = async (newsId: string) => {
-    try {
-      const token = await AsyncStorage.getItem("bookmark");
-      let res: string[] = token ? JSON.parse(token) : [];
-
-      res = res.filter((id) => id !== newsId);
-      await AsyncStorage.setItem("bookmark", JSON.stringify(res));
-      setBookmark(false);
-      // alert("News removed from bookmarks!");
-    } catch (error) {
-      console.error("Error removing bookmark:", error);
-    }
-  };
 
   useEffect(() => {
     if (!isLoading && news.length > 0) {
-      renderBookmark(news[0].article_id);
       incrementReadCount();
     }
   }, [isLoading, news]);
@@ -152,17 +112,13 @@ const NewsDetails = (props: Props) => {
                     />
                   </TouchableOpacity>
                   <TouchableOpacity
-                    onPress={() => {
-                      bookmark
-                        ? removeBookmark(news[0].article_id)
-                        : saveBookmark(news[0].article_id);
-                    }}
+                    onPress={() => toggleNewsFavorite(news[0].article_id)}
                     style={styles.backButton}
                     activeOpacity={0.7}
                   >
                     <Ionicons
-                      name={bookmark ? "bookmark" : "bookmark-outline"}
-                      color={bookmark ? (COLORS.neon || "#00d4ff") : "#fff"}
+                      name={isNewsFavorite(news[0].article_id) ? "bookmark" : "bookmark-outline"}
+                      color={isNewsFavorite(news[0].article_id) ? (COLORS.neon || "#00d4ff") : "#fff"}
                       size={22}
                     />
                   </TouchableOpacity>

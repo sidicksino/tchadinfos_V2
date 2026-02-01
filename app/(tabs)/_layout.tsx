@@ -6,15 +6,14 @@ import SafeScreenTabs from "@/components/SafeScreenTabs";
 import { ThemeContext } from "@/context/ThemeContext";
 import CustomTabBar from "@/components/TabBar/CustomTabBar";
 
-import { FavoritesProvider } from "@/context/FavoritesContext";
+
 
 const TabsLayout = () => {
   const { isDarkMode, COLORS } = useContext(ThemeContext);
 
   return (
-    <FavoritesProvider>
-      <SafeScreenTabs>
-        <StatusBar style="light" backgroundColor={COLORS.cardGradient || "#0033A0"} />
+    <SafeScreenTabs>
+      <StatusBar style="light" backgroundColor={COLORS.cardGradient || "#0033A0"} />
       <Tabs
         tabBar={(props) => <CustomTabBar {...props} />}
         screenOptions={{
@@ -52,8 +51,7 @@ const TabsLayout = () => {
           }}
         />
       </Tabs>
-      </SafeScreenTabs>
-    </FavoritesProvider>
+    </SafeScreenTabs>
   );
 };
 

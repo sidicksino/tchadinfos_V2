@@ -2,6 +2,7 @@ import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useContext } from "react";
 import { ThemeContext, ThemeProvider } from "../context/ThemeContext";
+import { FavoritesProvider } from "@/context/FavoritesContext";
 import { ClerkProvider, ClerkLoaded } from '@clerk/clerk-expo';
 import { tokenCache } from '@/cache'; // I will create this file next since the import in docs is sometimes tricky or assumes alias.
 
@@ -66,8 +67,10 @@ export default function RootLayout() {
     <ClerkProvider tokenCache={tokenCache} publishableKey={publishableKey}>
       <ClerkLoaded>
         <ThemeProvider>
-          <RootLayoutNav />
-          <StatusBar style="auto" />
+          <FavoritesProvider>
+            <RootLayoutNav />
+            <StatusBar style="auto" />
+          </FavoritesProvider>
         </ThemeProvider>
       </ClerkLoaded>
     </ClerkProvider>
